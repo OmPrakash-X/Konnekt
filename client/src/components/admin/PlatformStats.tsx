@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Award,
 } from 'lucide-react';
-import Card from '../common/Card';
 
 interface PlatformStatsProps {
   stats: {
@@ -31,40 +30,46 @@ const PlatformStats: React.FC<PlatformStatsProps> = ({ stats }) => {
       value: stats.totalUsers?.toLocaleString() || '0',
       subtitle: `${stats.activeUsers || 0} active`,
       icon: Users,
-      gradient: 'from-[#32b8c6] to-[#29a4b2]',
+      linear: 'from-[#32b8c6] to-[#29a4b2]',
       change: `+${stats.userGrowth || 0}%`,
+      iconBg: 'from-[#32b8c6] to-purple-500',
     },
     {
       title: 'Total Experts',
       value: stats.totalExperts?.toLocaleString() || '0',
       icon: Award,
-      gradient: 'from-purple-500 to-purple-600',
+      linear: 'from-purple-500 to-purple-600',
+      iconBg: 'from-purple-500 to-pink-500',
     },
     {
       title: 'Total Skills',
       value: stats.totalSkills?.toLocaleString() || '0',
       icon: BookOpen,
-      gradient: 'from-green-500 to-green-600',
+      linear: 'from-green-500 to-green-600',
+      iconBg: 'from-green-500 to-emerald-500',
     },
     {
       title: 'Total Sessions',
       value: stats.totalSessions?.toLocaleString() || '0',
       subtitle: `${stats.completedSessions || 0} completed`,
       icon: Calendar,
-      gradient: 'from-orange-500 to-orange-600',
+      linear: 'from-orange-500 to-orange-600',
       change: `+${stats.sessionGrowth || 0}%`,
+      iconBg: 'from-orange-500 to-red-500',
     },
     {
       title: 'Platform Revenue',
       value: `$${stats.totalRevenue?.toLocaleString() || '0'}`,
       icon: DollarSign,
-      gradient: 'from-[#32b8c6] to-[#21748d]',
+      linear: 'from-[#32b8c6] to-[#21748d]',
+      iconBg: 'from-cyan-500 to-blue-500',
     },
     {
       title: 'Badges Issued',
       value: stats.totalBadges?.toLocaleString() || '0',
       icon: Award,
-      gradient: 'from-yellow-500 to-yellow-600',
+      linear: 'from-yellow-500 to-yellow-600',
+      iconBg: 'from-yellow-500 to-orange-500',
     },
   ];
 
@@ -73,37 +78,51 @@ const PlatformStats: React.FC<PlatformStatsProps> = ({ stats }) => {
       {statCards.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Card
+          <div
             key={index}
-            className="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="group relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/5 hover:border-white/20 transition-all duration-300 hover:shadow-xl hover:shadow-[#32b8c6]/10"
           >
-            <div className="flex items-center justify-between">
+            {/* Glow effect on hover */}
+            <div className="absolute inset-0 bg-linear-to-br from-[#32b8c6]/0 to-purple-500/0 group-hover:from-[#32b8c6]/5 group-hover:to-purple-500/5 transition-all duration-300" />
+            
+            <div className="relative flex items-center justify-between">
+              {/* Stats Content */}
               <div className="flex-1">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                <p className="text-sm text-gray-400 mb-2 font-medium uppercase tracking-wider">
                   {stat.title}
                 </p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                <p className="text-4xl font-bold bg-linear-to-r from-white to-gray-300 bg-clip-text text-transparent mb-1">
                   {stat.value}
                 </p>
+                
                 {stat.subtitle && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-500 mt-2">
                     {stat.subtitle}
                   </p>
                 )}
+                
                 {stat.change && (
-                  <p className="text-sm text-green-600 dark:text-green-400 mt-2 flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3" />
-                    {stat.change}
-                  </p>
+                  <div className="flex items-center gap-1 mt-3 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded-lg w-fit">
+                    <TrendingUp className="w-3 h-3 text-green-400" />
+                    <span className="text-sm font-medium text-green-400">
+                      {stat.change}
+                    </span>
+                  </div>
                 )}
               </div>
-              <div
-                className={`p-4 bg-linear-to-br ${stat.gradient} rounded-xl shadow-lg`}
-              >
-                <Icon className="w-8 h-8 text-white" />
+
+              {/* Icon with linear */}
+              <div className="relative group/icon">
+                {/* Glow background */}
+                <div className={`absolute inset-0 bg-linear-to-br ${stat.iconBg} rounded-xl blur-xl opacity-20 group-hover/icon:opacity-40 transition-opacity duration-300`} />
+                
+                {/* Icon container */}
+                <div className={`relative p-4 bg-linear-to-br ${stat.iconBg} rounded-xl shadow-lg group-hover/icon:scale-110 transition-transform duration-300`}>
+                  <Icon className="w-8 h-8 text-white" />
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
         );
       })}
     </div>

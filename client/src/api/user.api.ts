@@ -14,7 +14,11 @@ export const updateProfile = (data: {
 };
 
 export const getMyProfile = () => {
-  return axiosInstance.get('/user/me');
+  return axiosInstance.get('/users/me');
+};
+
+export const becomeExpert = (data: { skills: string[]; bio: string }) => {
+  return axiosInstance.post('/users/become-expert', data);
 };
 
 export const searchUsers = (query: string) => {

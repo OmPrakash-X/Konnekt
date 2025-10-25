@@ -1,3 +1,4 @@
+// src/api/skill.api.ts
 import axiosInstance from './axios.config';
 
 export const getAllSkills = (params?: {
@@ -7,11 +8,11 @@ export const getAllSkills = (params?: {
   page?: number;
   limit?: number;
 }) => {
-  return axiosInstance.get('/skill/all', { params });
+  return axiosInstance.get('/skills/all', { params });
 };
 
 export const getSkillById = (skillId: string) => {
-  return axiosInstance.get(`/skill/${skillId}`);
+  return axiosInstance.get(`/skills/${skillId}`);
 };
 
 export const createSkill = (data: {
@@ -21,29 +22,32 @@ export const createSkill = (data: {
   level: string;
   creditsPerHour: number;
 }) => {
-  return axiosInstance.post('/skill/create', data);
+  return axiosInstance.post('/skills/create', data);
 };
 
 export const updateSkill = (skillId: string, data: any) => {
-  return axiosInstance.put(`/skill/${skillId}`, data);
+  return axiosInstance.put(`/skills/${skillId}`, data);
 };
 
 export const deleteSkill = (skillId: string) => {
-  return axiosInstance.delete(`/skill/${skillId}`);
+  return axiosInstance.delete(`/skills/${skillId}`);
 };
 
 export const getMySkills = () => {
-  return axiosInstance.get('/skill/my/skills');
+  return axiosInstance.get('/skills/my/skills');
 };
 
-export const endorseSkill = (skillId: string, data: { note?: string }) => {
-  return axiosInstance.post(`/skill/${skillId}/endorse`, data);
+export const endorseSkill = (skillId: string, data?: { note?: string }) => {
+  return axiosInstance.post(`/skills/${skillId}/endorse`, data || {});
 };
 
 export const getSkillsByCategory = (category: string) => {
-  return axiosInstance.get(`/skill/category/${category}`);
+  return axiosInstance.get(`/skills/category/${category}`);
 };
 
 export const searchSkills = (query: string) => {
-  return axiosInstance.get(`/skill/all?search=${query}`);
+  return axiosInstance.get('/skills/all', { params: { search: query } });
+};
+export const getSkillExperts = (skillId: string) => {
+  return axiosInstance.get(`/skills/${skillId}/experts`);
 };

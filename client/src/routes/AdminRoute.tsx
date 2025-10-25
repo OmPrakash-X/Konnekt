@@ -3,24 +3,25 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 
 const AdminRoute: React.FC = () => {
-  const { isAuthenticated, user, loading } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
-      </div>
-    );
-  }
+  console.log('AdminRoute:', { 
+    isAuthenticated, 
+    hasUser: !!user, 
+    role: user?.role 
+  });
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
+    console.log('❌ Not authenticated - redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
-  if (user?.role !== 'admin') {
+  if (user.role !== 'admin') {
+    console.log('❌ Not admin - role is:', user.role);
     return <Navigate to="/unauthorized" replace />;
   }
 
+  console.log('✅ Admin access granted');
   return <Outlet />;
 };
 

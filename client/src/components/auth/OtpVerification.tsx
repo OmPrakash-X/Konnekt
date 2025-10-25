@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { verifyEmail } from '../../redux/features/authSlice';
 import { ShieldCheck } from 'lucide-react';
 import Button from '../common/Button';
+import { toast } from 'sonner';
 
 const OtpVerification: React.FC = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const OtpVerification: React.FC = () => {
     setIsLoading(true);
     try {
       await dispatch(verifyEmail({ email: tempEmail!, otp: otpString })).unwrap();
-      alert('Email verified successfully! You can now log in.');
+      toast.success('Email verified successfully! You can now log in.');
       navigate('/login');
     } catch (err: any) {
       setError(err || 'Invalid OTP. Please try again.');

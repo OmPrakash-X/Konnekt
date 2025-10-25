@@ -8,4 +8,4 @@ export * from './features/sessionSlice';
 export * from './features/reviewSlice';
 export * from './features/badgeSlice';
 export * from './features/transactionSlice';
-export * from './features/adminSlice'; 
+export * from './features/adminSlice';

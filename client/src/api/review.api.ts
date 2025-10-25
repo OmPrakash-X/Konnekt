@@ -1,3 +1,4 @@
+// src/api/review.api.ts
 import axiosInstance from './axios.config';
 
 export const createReview = (data: {
@@ -6,35 +7,35 @@ export const createReview = (data: {
   rating: number;
   comment: string;
 }) => {
-  return axiosInstance.post('/review/create', data);
+  return axiosInstance.post('/reviews/create', data);
 };
 
 export const getReviewsByExpert = (expertId: string, params?: {
   page?: number;
   limit?: number;
 }) => {
-  return axiosInstance.get(`/review/expert/${expertId}`, { params });
+  return axiosInstance.get(`/reviews/expert/${expertId}`, { params });
 };
 
 export const getReviewsByUser = (userId: string) => {
-  return axiosInstance.get(`/review/user/${userId}`);
+  return axiosInstance.get(`/reviews/user/${userId}`);
 };
 
 export const getMyReviews = () => {
-  return axiosInstance.get('/review/my-reviews');
+  return axiosInstance.get('/reviews/my-reviews');
 };
 
 export const updateReview = (reviewId: string, data: {
   rating?: number;
   comment?: string;
 }) => {
-  return axiosInstance.put(`/review/${reviewId}`, data);
+  return axiosInstance.put(`/reviews/${reviewId}`, data);
 };
 
 export const deleteReview = (reviewId: string) => {
-  return axiosInstance.delete(`/review/${reviewId}`);
+  return axiosInstance.delete(`/reviews/${reviewId}`);
 };
 
 export const markReviewHelpful = (reviewId: string) => {
-  return axiosInstance.post(`/review/${reviewId}/helpful`);
+  return axiosInstance.post(`/reviews/${reviewId}/helpful`);
 };

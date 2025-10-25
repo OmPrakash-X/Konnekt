@@ -7,22 +7,37 @@ import { catchAsyncErrors } from "./catchAsyncErrors.js";
 export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.cookies;
 
+  console.log("=== AUTH MIDDLEWARE ===");
+  console.log("🍪 Cookies:", req.cookies);
+  console.log("🎫 Token exists:", !!token);
+
   if (!token) {
     return next(new ErrorHandler("Please login to access this resource", 401));
   }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = await User.findById(decoded.id);
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("🔓 Decoded token:", decoded);
+    
+    // FIX: Use decoded.userId instead of decoded.id
+    req.user = await User.findById(decoded.userId); // ✅ Fixed!
 
-  if (!req.user) {
-    return next(new ErrorHandler("User not found", 404));
+    if (!req.user) {
+      console.log("❌ User not found in database");
+      return next(new ErrorHandler("User not found", 404));
+    }
+
+    console.log("✅ User authenticated:", req.user.email);
+
+    if (req.user.accountStatus !== "active") {
+      return next(new ErrorHandler("Account is suspended or deactivated", 403));
+    }
+
+    next();
+  } catch (error) {
+    console.error("❌ JWT verification error:", error.message);
+    return next(new ErrorHandler("Invalid or expired token", 401));
   }
-
-  if (req.user.accountStatus !== "active") {
-    return next(new ErrorHandler("Account is suspended or deactivated", 403));
-  }
-
-  next();
 });
 
 // Authorize specific roles

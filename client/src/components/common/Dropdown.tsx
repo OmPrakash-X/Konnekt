@@ -10,14 +10,9 @@ interface DropdownItem {
 interface DropdownProps {
   trigger: React.ReactNode;
   items: DropdownItem[];
-  position?: 'left' | 'right';
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
-  trigger,
-  items,
-  position = 'right',
-}) => {
+const Dropdown: React.FC<DropdownProps> = ({ trigger, items }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,47 +27,41 @@ const Dropdown: React.FC<DropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const positionClass = position === 'left' ? 'left-0' : 'right-0';
-
   return (
-    <div ref={dropdownRef} className="relative inline-block">
-      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
-        {trigger}
-      </div>
+    <div className="relative" ref={dropdownRef}>
+      <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
 
       {isOpen && (
-        <div
-          className={`
-            absolute ${positionClass} mt-2 w-56 z-50
-            bg-white dark:bg-gray-800
-            border border-gray-200 dark:border-gray-700
-            rounded-lg shadow-lg
-            py-2
-            animate-in fade-in slide-in-from-top-2
-            duration-200
-          `}
-        >
-          {items.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                item.onClick();
-                setIsOpen(false);
-              }}
-              className={`
-                w-full px-4 py-2.5 text-left flex items-center gap-3
-                transition-colors duration-150
-                ${
-                  item.danger
-                    ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                }
-              `}
-            >
-              {item.icon && <span className="flex-shrink-0">{item.icon}</span>}
-              <span className="text-sm font-medium">{item.label}</span>
-            </button>
-          ))}
+        <div className="absolute right-0 mt-2 w-56 origin-top-right animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+          {/* Glassmorphism Dropdown Menu */}
+          <div className="bg-black/90 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden">
+            <div className="py-2">
+              {items.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    item.onClick();
+                    setIsOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200
+                    ${
+                      item.danger
+                        ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }
+                  `}
+                >
+                  {item.icon && (
+                    <span className={item.danger ? 'text-red-400' : 'text-gray-400'}>
+                      {item.icon}
+                    </span>
+                  )}
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

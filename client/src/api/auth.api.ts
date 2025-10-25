@@ -13,7 +13,7 @@ export const logout = () => {
 };
 
 export const getProfile = () => {
-  return axiosInstance.get('/user/me');
+  return axiosInstance.get('/users/me');
 };
 
 export const verifyEmailOtp = (data: { email: string; otp: string }) => {

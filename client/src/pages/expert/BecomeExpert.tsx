@@ -7,6 +7,7 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Container from '../../components/layout/Container';
+import { toast } from 'sonner';
 
 const BecomeExpert: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -42,10 +43,10 @@ const BecomeExpert: React.FC = () => {
         bio: formData.bio,
       })).unwrap();
       
-      alert('Application submitted successfully!');
+     toast.success('Application submitted successfully!');
       navigate('/dashboard');
     } catch (error) {
-      alert('Failed to submit application');
+      toast.error('Failed to submit application');
     } finally {
       setIsLoading(false);
     }

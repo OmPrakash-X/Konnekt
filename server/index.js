@@ -22,6 +22,12 @@ import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 dotenv.config();
 
 const app = express();
+console.log("=== Environment Check ===");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("PORT:", process.env.PORT);
+console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
+console.log("JWT_SECRET length:", process.env.JWT_SECRET?.length);
+console.log("========================");
 
 // ===== Middleware =====
 app.use(express.json());

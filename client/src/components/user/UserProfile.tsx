@@ -3,7 +3,6 @@ import { Mail, MapPin, Calendar, Award, Star, TrendingUp, Edit } from 'lucide-re
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
 
-
 interface UserProfileProps {
   user: {
     id: string;
@@ -11,7 +10,7 @@ interface UserProfileProps {
     email: string;
     avatar?: string;
     bio?: string;
-    location?: string;
+    location?: string | { country?: string; city?: string; state?: string }; // Can be string or object
     joinedDate: string;
     rating?: number;
     totalReviews?: number;
@@ -28,6 +27,25 @@ interface UserProfileProps {
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ user, isOwnProfile, onEdit }) => {
+  // Helper function to format location
+  const formatLocation = (location: string | { country?: string; city?: string; state?: string } | undefined) => {
+    if (!location) return null;
+    
+    if (typeof location === 'string') {
+      return location;
+    }
+    
+    // If location is an object, format it as a string
+    const parts = [];
+    if (location.city) parts.push(location.city);
+    if (location.state) parts.push(location.state);
+    if (location.country) parts.push(location.country);
+    
+    return parts.length > 0 ? parts.join(', ') : null;
+  };
+
+  const locationString = formatLocation(user.location);
+
   return (
     <div className="space-y-6">
       {/* Header Card */}
@@ -81,10 +99,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, isOwnProfile, onEdit })
                 <Mail className="w-4 h-4" />
                 <span>{user.email}</span>
               </div>
-              {user.location && (
+              {locationString && (
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  <span>{user.location}</span>
+                  <span>{locationString}</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
