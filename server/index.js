@@ -4,38 +4,60 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ConnectDB } from "./config/db.js";
 
-// Routes
+// Routes Import
 import AuthRouter from "./routes/authRoutes.js";
+import UserRouter from "./routes/userRoutes.js";
+import AdminRouter from "./routes/adminRoutes.js";
+import SkillRouter from "./routes/skillRoutes.js";
+import BadgeRouter from "./routes/badgeRoutes.js";
+import SessionRouter from "./routes/sessionRoutes.js";
+import ReviewRouter from "./routes/reviewRoutes.js";
+import TransactionRouter from "./routes/transactionRoutes.js";
+
+// Middleware Import
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 
-// Global Error Middleware
-
-
+// Load Environment Variables
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// ===== Middleware =====
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   })
 );
 
-// Routes
-app.use("/api/auth", AuthRouter);
-
-
-
-// Server 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  ConnectDB();
-  console.log(`🚀 Server running on http://localhost:${port}`);
+// ===== Health Check Route =====
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "🚀 Konnekt API is running!",
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// Error Handler
+// ===== API Routes =====
+app.use("/api/auth", AuthRouter);
+app.use("/api/users", UserRouter);
+app.use("/api/admin", AdminRouter);
+app.use("/api/skills", SkillRouter);
+app.use("/api/badges", BadgeRouter);
+app.use("/api/sessions", SessionRouter);
+app.use("/api/reviews", ReviewRouter);
+app.use("/api/transactions", TransactionRouter);
+
+// ===== Server Startup =====
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
+  ConnectDB();
+  console.log(`🚀 Server is running on port ${port}`);
+});
+
 app.use(errorMiddleware);

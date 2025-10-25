@@ -1,7 +1,7 @@
 import {
   generatePasswordResetOtpEmailTemplate,
   generateVerificationOtpEmailTemplate,
-} from "./emailTemplate.js";
+} from "../utils/emailTemplate.js";
 import { sendEmail } from "./sendEmail.js";
 
 async function sendCodeEmail({
