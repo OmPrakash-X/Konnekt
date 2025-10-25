@@ -1,3 +1,4 @@
+// src/redux/features/badgeSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as badgeAPI from '../../api/badge.api';
 
@@ -21,9 +22,10 @@ export const getAllBadges = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await badgeAPI.getAllBadges();
-      return response.data;
+      // Backend returns { success: true, badges: [...] }
+      return response.data.badges || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch badges');
     }
   }
 );
@@ -34,9 +36,9 @@ export const getMyBadges = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await badgeAPI.getMyBadges();
-      return response.data;
+      return response.data.badges || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch my badges');
     }
   }
 );
@@ -47,9 +49,10 @@ export const createBadge = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     try {
       const response = await badgeAPI.createBadge(data);
-      return response.data;
+      // Backend returns { success: true, message: "...", badge: {...} }
+      return response.data.badge || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to create badge');
     }
   }
 );
@@ -59,10 +62,10 @@ export const updateBadge = createAsyncThunk(
   'badge/updateBadge',
   async ({ badgeId, data }: { badgeId: string; data: any }, { rejectWithValue }) => {
     try {
-      const response = await badgeAPI.updateBadge(badgeId, data);
-      return response.data;
+      const response = await badgeAPI.updateBadge({ badgeId, data });
+      return response.data.badge || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to update badge');
     }
   }
 );
@@ -75,7 +78,7 @@ export const deleteBadge = createAsyncThunk(
       await badgeAPI.deleteBadge(badgeId);
       return badgeId;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete badge');
     }
   }
 );
@@ -90,40 +93,84 @@ const badgeSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get All Badges
-    builder.addCase(getAllBadges.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getAllBadges.fulfilled, (state, action) => {
-      state.loading = false;
-      state.badges = action.payload;
-    });
-    builder.addCase(getAllBadges.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+    builder
+      .addCase(getAllBadges.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllBadges.fulfilled, (state, action) => {
+        state.loading = false;
+        state.badges = action.payload;
+      })
+      .addCase(getAllBadges.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Get My Badges
-    builder.addCase(getMyBadges.fulfilled, (state, action) => {
-      state.myBadges = action.payload;
-    });
+    builder
+      .addCase(getMyBadges.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getMyBadges.fulfilled, (state, action) => {
+        state.loading = false;
+        state.myBadges = action.payload;
+      })
+      .addCase(getMyBadges.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Create Badge
-    builder.addCase(createBadge.fulfilled, (state, action) => {
-      state.badges.push(action.payload);
-    });
+    builder
+      .addCase(createBadge.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createBadge.fulfilled, (state, action) => {
+        state.loading = false;
+        state.badges.unshift(action.payload); // Add to beginning
+      })
+      .addCase(createBadge.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Update Badge
-    builder.addCase(updateBadge.fulfilled, (state, action) => {
-      const index = state.badges.findIndex((b) => b.id === action.payload.id);
-      if (index !== -1) {
-        state.badges[index] = action.payload;
-      }
-    });
+    builder
+      .addCase(updateBadge.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateBadge.fulfilled, (state, action) => {
+        state.loading = false;
+        // Handle both 'id' and '_id' fields
+        const index = state.badges.findIndex(
+          (b) => b.id === action.payload.id || b._id === action.payload.id || b.id === action.payload._id || b._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.badges[index] = action.payload;
+        }
+      })
+      .addCase(updateBadge.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Delete Badge
-    builder.addCase(deleteBadge.fulfilled, (state, action) => {
-      state.badges = state.badges.filter((b) => b.id !== action.payload);
-    });
+    builder
+      .addCase(deleteBadge.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteBadge.fulfilled, (state, action) => {
+        state.loading = false;
+        // Handle both 'id' and '_id' fields
+        state.badges = state.badges.filter(
+          (b) => b.id !== action.payload && b._id !== action.payload
+        );
+      })
+      .addCase(deleteBadge.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

@@ -7,6 +7,7 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Container from '../../components/layout/Container';
 import Spinner from '../../components/common/Spinner';
+import { toast } from 'sonner';
 
 const Wallet: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const Wallet: React.FC = () => {
   }, [dispatch]);
 
   const handleAddCredits = () => {
-    alert('Payment gateway integration coming soon!');
+    toast.success('Payment gateway integration coming soon!');
   };
 
   if (loading && !profile) {

@@ -13,20 +13,30 @@ const Profile: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { profile, loading } = useAppSelector((state) => state.user);
+  const { profile, loading: profileLoading } = useAppSelector((state) => state.user);
   const { reviews } = useAppSelector((state) => state.review);
   const currentUser = useAppSelector((state) => state.auth.user);
 
-  const isOwnProfile = !userId || userId === currentUser?.id;
+  const isOwnProfile = !userId || userId === (currentUser?.id || currentUser?._id);
 
   useEffect(() => {
-    if (userId) {
+    // Only fetch if viewing someone else's profile
+    if (userId && !isOwnProfile) {
       dispatch(getUserProfile(userId));
       dispatch(getReviewsByExpert(userId));
+    } else if (currentUser?.id || currentUser?._id) {
+      // Fetch reviews for own profile
+      const myId = currentUser.id || currentUser._id;
+      if (myId) {
+        dispatch(getReviewsByExpert(myId));
+      }
     }
-  }, [dispatch, userId]);
+  }, [dispatch, userId, isOwnProfile, currentUser?.id, currentUser?._id]);
 
-  if (loading) {
+  // Use auth.user for own profile, profile for others
+  const displayUser = isOwnProfile ? currentUser : profile;
+
+  if (profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
         <Spinner size="lg" />
@@ -34,17 +44,48 @@ const Profile: React.FC = () => {
     );
   }
 
-  if (!profile) {
+  if (!displayUser) {
     return (
       <div className="min-h-screen bg-black">
         <Container>
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-white">Profile not found</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">Profile not found</h2>
+            <p className="text-gray-400 mb-6">User ID: {userId || 'Not provided'}</p>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="px-6 py-3 bg-linear-to-r from-[#32b8c6] to-purple-500 text-white rounded-xl hover:scale-105 transition-transform"
+            >
+              Go to Dashboard
+            </button>
           </div>
         </Container>
       </div>
     );
   }
+
+  // Transform the user data to match UserProfile component expectations
+  const profileData = {
+    id: displayUser.id || displayUser._id || '',
+    name: displayUser.name || 'Unknown User',
+    email: displayUser.email || '',
+    avatar: displayUser.avatar,
+    bio: displayUser.bio,
+    location: displayUser.location, // Pass the whole location object
+    joinedDate: displayUser.joinedDate || displayUser.createdAt || new Date().toISOString(),
+    rating: displayUser.averageRating || displayUser.rating || 0,
+    totalReviews: displayUser.totalReviews || 0,
+    totalSessions: displayUser.totalSessions || 0,
+    expertIn: displayUser.skills?.map((skill: any) => 
+      typeof skill === 'string' ? skill : skill.name
+    ) || displayUser.expertIn || [],
+    badges: displayUser.badges?.map((badge: any) => ({
+      name: badge.name || badge,
+      icon: badge.icon || '🏆',
+    })) || [],
+    isExpert: displayUser.expertProfile?.isExpert || 
+              displayUser.isExpert || 
+              displayUser.role === 'expert',
+  };
 
   return (
     <div className="min-h-screen bg-black">
@@ -57,11 +98,11 @@ const Profile: React.FC = () => {
       <Container>
         <div className="py-12 space-y-8">
           <UserProfile
-            user={profile}
+            user={profileData}
             isOwnProfile={isOwnProfile}
             onEdit={() => navigate('/profile/edit')}
           />
-          <UserReviews reviews={reviews} loading={false} />
+          <UserReviews reviews={reviews || []} loading={false} />
         </div>
       </Container>
     </div>

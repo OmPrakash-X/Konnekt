@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../redux/hooks';
 import { createSkill } from '../../redux/features/skillSlice';
 import { BookOpen, Tag, FileText, DollarSign } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AddSkill: React.FC = () => {
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ const AddSkill: React.FC = () => {
 
     try {
       await dispatch(createSkill(formData)).unwrap();
-      alert('Skill added successfully!');
+      toast.success('Skill added successfully!');
       navigate('/skills/my-skills');
     } catch (error: any) {
-      alert(error || 'Failed to add skill');
+      toast.error(error || 'Failed to add skill');
     } finally {
       setIsLoading(false);
     }

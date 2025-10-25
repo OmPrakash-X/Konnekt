@@ -1,7 +1,7 @@
+// src/redux/features/skillSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as skillAPI from '../../api/skill.api';
 
-// Complete Skill interface matching SkillCard component
 interface Skill {
   id: string;
   name: string;
@@ -19,6 +19,8 @@ interface Skill {
 interface SkillState {
   skills: Skill[];
   currentSkill: Skill | null;
+  mySkills: Skill[];
+  skillExperts: any[];
   loading: boolean;
   error: string | null;
 }
@@ -26,6 +28,8 @@ interface SkillState {
 const initialState: SkillState = {
   skills: [],
   currentSkill: null,
+  mySkills: [],
+  skillExperts: [],
   loading: false,
   error: null,
 };
@@ -36,9 +40,9 @@ export const getAllSkills = createAsyncThunk(
   async (params: any = {}, { rejectWithValue }) => {
     try {
       const response = await skillAPI.getAllSkills(params);
-      return response.data;
+      return response.data.skills || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch skills');
     }
   }
 );
@@ -49,9 +53,9 @@ export const getSkillById = createAsyncThunk(
   async (skillId: string, { rejectWithValue }) => {
     try {
       const response = await skillAPI.getSkillById(skillId);
-      return response.data;
+      return response.data.skill || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch skill');
     }
   }
 );
@@ -68,9 +72,9 @@ export const createSkill = createAsyncThunk(
   }, { rejectWithValue }) => {
     try {
       const response = await skillAPI.createSkill(data);
-      return response.data;
+      return response.data.skill || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to create skill');
     }
   }
 );
@@ -81,9 +85,9 @@ export const updateSkill = createAsyncThunk(
   async ({ skillId, data }: { skillId: string; data: any }, { rejectWithValue }) => {
     try {
       const response = await skillAPI.updateSkill(skillId, data);
-      return response.data;
+      return response.data.skill || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to update skill');
     }
   }
 );
@@ -96,7 +100,7 @@ export const deleteSkill = createAsyncThunk(
       await skillAPI.deleteSkill(skillId);
       return skillId;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete skill');
     }
   }
 );
@@ -107,9 +111,9 @@ export const getMySkills = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await skillAPI.getMySkills();
-      return response.data;
+      return response.data.skills || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch my skills');
     }
   }
 );
@@ -120,9 +124,9 @@ export const searchSkills = createAsyncThunk(
   async (query: string, { rejectWithValue }) => {
     try {
       const response = await skillAPI.searchSkills(query);
-      return response.data;
+      return response.data.skills || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to search skills');
     }
   }
 );
@@ -133,9 +137,9 @@ export const getSkillExperts = createAsyncThunk(
   async (skillId: string, { rejectWithValue }) => {
     try {
       const response = await skillAPI.getSkillExperts(skillId);
-      return response.data;
+      return response.data.experts || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch skill experts');
     }
   }
 );
@@ -148,7 +152,7 @@ export const endorseSkill = createAsyncThunk(
       const response = await skillAPI.endorseSkill(skillId, { note });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || 'Failed to endorse skill');
     }
   }
 );
@@ -166,59 +170,138 @@ const skillSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get All Skills
-    builder.addCase(getAllSkills.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(getAllSkills.fulfilled, (state, action) => {
-      state.loading = false;
-      state.skills = action.payload;
-    });
-    builder.addCase(getAllSkills.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+    builder
+      .addCase(getAllSkills.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllSkills.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skills = action.payload;
+      })
+      .addCase(getAllSkills.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Get Skill By ID
-    builder.addCase(getSkillById.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getSkillById.fulfilled, (state, action) => {
-      state.loading = false;
-      state.currentSkill = action.payload;
-    });
-    builder.addCase(getSkillById.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+    builder
+      .addCase(getSkillById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getSkillById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentSkill = action.payload;
+      })
+      .addCase(getSkillById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Get My Skills
-    builder.addCase(getMySkills.fulfilled, (state, action) => {
-      state.skills = action.payload;
-    });
+    builder
+      .addCase(getMySkills.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getMySkills.fulfilled, (state, action) => {
+        state.loading = false;
+        state.mySkills = action.payload;
+      })
+      .addCase(getMySkills.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Create Skill
-    builder.addCase(createSkill.fulfilled, (state, action) => {
-      state.skills.push(action.payload);
-    });
+    builder
+      .addCase(createSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skills.unshift(action.payload);
+      })
+      .addCase(createSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Update Skill
-    builder.addCase(updateSkill.fulfilled, (state, action) => {
-      const index = state.skills.findIndex((s) => s.id === action.payload.id);
-      if (index !== -1) {
-        state.skills[index] = action.payload;
-      }
-    });
+    builder
+      .addCase(updateSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.skills.findIndex(
+          (s) => s.id === action.payload.id || (s as any)._id === action.payload.id
+        );
+        if (index !== -1) {
+          state.skills[index] = action.payload;
+        }
+      })
+      .addCase(updateSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Delete Skill
-    builder.addCase(deleteSkill.fulfilled, (state, action) => {
-      state.skills = state.skills.filter((s) => s.id !== action.payload);
-    });
+    builder
+      .addCase(deleteSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skills = state.skills.filter(
+          (s) => s.id !== action.payload && (s as any)._id !== action.payload
+        );
+      })
+      .addCase(deleteSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
     // Search Skills
-    builder.addCase(searchSkills.fulfilled, (state, action) => {
-      state.skills = action.payload;
-    });
+    builder
+      .addCase(searchSkills.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(searchSkills.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skills = action.payload;
+      })
+      .addCase(searchSkills.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Get Skill Experts
+    builder
+      .addCase(getSkillExperts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getSkillExperts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skillExperts = action.payload;
+      })
+      .addCase(getSkillExperts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Endorse Skill
+    builder
+      .addCase(endorseSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(endorseSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally update the current skill if needed
+      })
+      .addCase(endorseSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

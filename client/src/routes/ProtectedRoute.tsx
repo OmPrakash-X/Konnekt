@@ -3,17 +3,15 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 
 const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
-      </div>
-    );
+  console.log('ProtectedRoute:', { isAuthenticated, hasUser: !!user });
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

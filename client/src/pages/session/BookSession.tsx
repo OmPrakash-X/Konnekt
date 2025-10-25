@@ -7,6 +7,7 @@ import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Container from '../../components/layout/Container';
+import { toast } from 'sonner';
 
 const BookSession: React.FC = () => {
   const navigate = useNavigate();
@@ -36,10 +37,10 @@ const BookSession: React.FC = () => {
         ...formData,
       })).unwrap();
 
-      alert('Session booked successfully!');
+     toast.success('Session booked successfully!');
       navigate('/sessions/my-sessions');
     } catch (error: any) {
-      alert(error || 'Failed to book session');
+      toast.error(error || 'Failed to book session');
     } finally {
       setIsLoading(false);
     }

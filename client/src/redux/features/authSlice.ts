@@ -1,95 +1,214 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import * as authAPI from '../../api/auth.api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import * as authAPI from "../../api/auth.api";
 
 interface User {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   email: string;
   avatar?: string;
-  role: 'user' | 'expert' | 'admin';
+  role: "user" | "expert" | "admin";
   isEmailVerified: boolean;
+  accountStatus?: string;
+  bio?: string;
+  location?: string | { country?: string; city?: string; state?: string };
+  joinedDate?: string;
+  createdAt?: string;
+  rating?: number;
+  totalReviews?: number;
+  totalSessions?: number;
+  expertIn?: string[];
+  badges?: Array<{
+    name: string;
+    icon: string;
+  }>;
+  isExpert?: boolean;
+
+  // ADD THESE MISSING PROPERTIES:
+  averageRating?: number;
+  completedSessions?: number;
+  skills?: Array<string | { name: string; level?: string }>;
+  learningNeeds?: string[];
+  walletBalance?: number;
+  totalEarnings?: number;
+  totalSpent?: number;
+  profileViews?: number;
+  profileCompleteness?: number;
+  isProfileComplete?: boolean;
+  lastActive?: string;
+  updatedAt?: string;
+  __v?: number;
+
+  expertProfile?: {
+    isExpert: boolean;
+    expertiseAreas?: string[];
+    hourlyRate?: number;
+    certificationDocuments?: string[];
+  };
+
+  preferences?: {
+    sessionMode?: string[];
+    maxDistance?: number;
+  };
+
+  availability?: {
+    days?: string[];
+    timezone?: string;
+    timeSlots?: string[];
+  };
+
+  notifications?: {
+    email?: boolean;
+    push?: boolean;
+    sms?: boolean;
+    newMessages?: boolean;
+    sessionReminders?: boolean;
+    reviewReceived?: boolean;
+    creditsEarned?: boolean;
+  };
+
+  accessibility?: {
+    highContrast?: boolean;
+    voiceControl?: boolean;
+    language?: string;
+    fontSize?: string;
+  };
 }
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
-  tempEmail: string | null; // For verification flow
+  tempEmail: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  token: null,
   isAuthenticated: false,
   loading: false,
   error: null,
   tempEmail: null,
 };
 
-// Async thunks
+// Helper function to transform user data
+const transformUserData = (userData: any): User => {
+  return {
+    ...userData,
+    id: userData._id || userData.id,
+    joinedDate: userData.createdAt || userData.joinedDate,
+    isExpert: userData.role === "expert",
+  };
+};
+
+// Login
 export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  "auth/login",
+  async (
+    credentials: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
+      console.log("🔐 Logging in...");
       const response = await authAPI.login(credentials);
-      localStorage.setItem('token', response.data.token);
-      return response.data.user;
+      console.log("✅ Login successful");
+
+      return {
+        user: transformUserData(response.data.user),
+        token: response.data.token,
+      };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      console.error("❌ Login failed:", error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
 );
 
+// Signup
 export const signup = createAsyncThunk(
-  'auth/signup',
+  "auth/signup",
   async (
     userData: { name: string; email: string; password: string },
     { rejectWithValue }
   ) => {
     try {
+      console.log("📝 Signing up...");
       const response = await authAPI.signup(userData);
-      return { ...response.data, email: userData.email }; // NEW - ADD EMAIL
+      console.log("✅ Signup successful");
+
+      return { ...response.data, email: userData.email };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Signup failed');
+      console.error("❌ Signup failed:", error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || "Signup failed");
     }
   }
 );
 
-
-export const logout = createAsyncThunk('auth/logout', async () => {
-  await authAPI.logout();
-  localStorage.removeItem('token');
-});
-
+// Load User (called on app mount)
 export const loadUser = createAsyncThunk(
-  'auth/loadUser',
+  "auth/loadUser",
   async (_, { rejectWithValue }) => {
     try {
+      console.log("📡 Loading user from /user/me...");
       const response = await authAPI.getProfile();
-      return response.data.user;
+      console.log("✅ User loaded:", response.data.user);
+
+      return transformUserData(response.data.user);
     } catch (error: any) {
-      localStorage.removeItem('token');
-      return rejectWithValue(error.response?.data?.message || 'Failed to load user');
+      console.error(
+        "❌ Failed to load user:",
+        error.response?.data?.message || error.message
+      );
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to load user"
+      );
     }
   }
 );
 
+// Logout
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log("🚪 Logging out...");
+      await authAPI.logout();
+      console.log("✅ Logout successful");
+    } catch (error: any) {
+      console.error("⚠️ Logout error:", error);
+      return rejectWithValue(error.response?.data?.message || "Logout failed");
+    }
+  }
+);
+
+// Verify Email
 export const verifyEmail = createAsyncThunk(
-  'auth/verifyEmail',
+  "auth/verifyEmail",
   async (data: { email: string; otp: string }, { rejectWithValue }) => {
     try {
+      console.log("✉️ Verifying email...");
       const response = await authAPI.verifyEmailOtp(data);
-      return response.data;
+      console.log("✅ Email verified");
+
+      return {
+        user: transformUserData(response.data.user),
+        token: response.data.token,
+      };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Verification failed');
+      console.error("❌ Verification failed:", error.response?.data?.message);
+      return rejectWithValue(
+        error.response?.data?.message || "Verification failed"
+      );
     }
   }
 );
 
 // Slice
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -103,68 +222,121 @@ const authSlice = createSlice({
     clearTempEmail: (state) => {
       state.tempEmail = null;
     },
-  },
-  extraReducers: (builder) => {
-    // Login
-    builder.addCase(login.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.loading = false;
-      state.isAuthenticated = true;
-      state.user = action.payload;
-    });
-    builder.addCase(login.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-
-    // Signup
-    builder.addCase(signup.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(signup.fulfilled, (state, action) => {
-      state.loading = false;
-      state.tempEmail = action.payload.email; // Store email for verification
-    });
-    builder.addCase(signup.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-
-    // Logout
-    builder.addCase(logout.fulfilled, (state) => {
+    // Manual logout (clear state only)
+    logoutLocal: (state) => {
+      console.log("🧹 Clearing local auth state");
       state.user = null;
+      state.token = null;
       state.isAuthenticated = false;
       state.tempEmail = null;
-    });
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    // ===== LOGIN =====
+    builder
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
+        state.error = action.payload as string;
+      });
 
-    // Load User
-    builder.addCase(loadUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(loadUser.fulfilled, (state, action) => {
-      state.loading = false;
-      state.isAuthenticated = true;
-      state.user = action.payload;
-    });
-    builder.addCase(loadUser.rejected, (state) => {
-      state.loading = false;
-      state.isAuthenticated = false;
-      state.user = null;
-    });
+    // ===== SIGNUP =====
+    builder
+      .addCase(signup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.tempEmail = action.payload.email;
+        state.error = null;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
 
-    // Verify Email
-    builder.addCase(verifyEmail.fulfilled, (state) => {
-      state.tempEmail = null; // Clear after verification
-      if (state.user) {
-        state.user.isEmailVerified = true;
-      }
-    });
+    // ===== LOAD USER =====
+    builder
+      .addCase(loadUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
+        state.error = action.payload as string;
+      });
+
+    // ===== LOGOUT =====
+    builder
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.tempEmail = null;
+        state.error = null;
+      })
+      .addCase(logout.rejected, (state) => {
+        // Even if logout fails on backend, clear local state
+        state.loading = false;
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.tempEmail = null;
+      });
+
+    // ===== VERIFY EMAIL =====
+    builder
+      .addCase(verifyEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.tempEmail = null;
+        state.error = null;
+
+        if (state.user) {
+          state.user.isEmailVerified = true;
+        }
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { clearError, updateUser, clearTempEmail } = authSlice.actions;
+export const { clearError, updateUser, clearTempEmail, logoutLocal } =
+  authSlice.actions;
 export default authSlice.reducer;

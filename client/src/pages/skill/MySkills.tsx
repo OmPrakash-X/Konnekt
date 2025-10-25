@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getMySkills, deleteSkill } from '../../redux/features/skillSlice';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import SkillCard from '../../components/skill/SkillCard';
+import { toast } from 'sonner';
 
 const MySkills: React.FC = () => {
   const navigate = useNavigate();
@@ -14,12 +15,31 @@ const MySkills: React.FC = () => {
     dispatch(getMySkills());
   }, [dispatch]);
 
-  const handleDelete = async (skillId: string) => {
-    if (confirm('Are you sure you want to delete this skill?')) {
-      await dispatch(deleteSkill(skillId));
-      dispatch(getMySkills());
-    }
-  };
+  const confirmDeleteSkill = async (skillId: string) => {
+  try {
+    await dispatch(deleteSkill(skillId)).unwrap();
+    toast.success('Skill deleted successfully!');
+    dispatch(getMySkills());
+  } catch (error) {
+    console.error('Error deleting skill:', error);
+    toast.error('Failed to delete skill');
+  }
+};
+
+ const handleDelete = (skillId: string) => {
+  toast('Are you sure you want to delete this skill?', {
+    description: 'This action cannot be undone.',
+    action: {
+      label: 'Delete',
+      onClick: () => confirmDeleteSkill(skillId),
+    },
+    cancel: {
+      label: 'Cancel',
+      onClick: () => toast.info('Deletion cancelled'),
+    },
+    duration: 5000,
+  });
+};
 
   const handleEdit = (skillId: string) => {
     navigate(`/skills/edit/${skillId}`);

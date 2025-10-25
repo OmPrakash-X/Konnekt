@@ -1,3 +1,4 @@
+// routes/adminRoutes.js
 import express from "express";
 import {
   getAllUsers,
@@ -7,10 +8,10 @@ import {
   deleteUser,
   awardBadge,
   verifySkill,
+  getPendingSkills, // ADD THIS
   getPlatformStats,
 } from "../controllers/adminController.js";
 import { authorizeRoles, isAuthenticated } from "../middlewares/isAuth.js";
-
 
 const router = express.Router();
 
@@ -24,11 +25,12 @@ router.put("/user/:id/suspend", suspendUser);
 router.put("/user/:id/unsuspend", unsuspendUser);
 router.delete("/user/:id", deleteUser);
 
+// ===== Skill Verification =====
+router.get("/skills/pending", getPendingSkills); // ADD THIS
+router.put("/skill/:skillId/verify", verifySkill);
+
 // ===== Badge Management =====
 router.post("/badge/award", awardBadge);
-
-// ===== Skill Verification =====
-router.put("/skill/:skillId/verify", verifySkill);
 
 // ===== Platform Statistics =====
 router.get("/stats", getPlatformStats);

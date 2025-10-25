@@ -70,7 +70,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
           {/* Public Expert/Skill Routes */}
           <Route path="/experts" element={<ExpertsList />} />

@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Users, BookOpen, Award, TrendingUp, Sparkles, Zap, Target } from 'lucide-react';
+import { ArrowRight, Users, BookOpen, Award, TrendingUp, Sparkles, Zap, Target, Compass } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useAppSelector } from '../redux/hooks';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -12,6 +13,9 @@ const Home: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+
+  // Check authentication status
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const features = [
     {
@@ -48,7 +52,6 @@ const Home: React.FC = () => {
   ];
 
   useGSAP(() => {
-    // Hero animations with optimized timing
     const heroTimeline = gsap.timeline({
       defaults: { ease: 'power3.out' },
       delay: 0.2
@@ -72,7 +75,6 @@ const Home: React.FC = () => {
         stagger: 0.15,
       }, '-=0.3');
 
-    // Optimized floating orbs - slower and smoother
     gsap.to('.floating-orb', {
       y: 'random(-20, 20)',
       x: 'random(-20, 20)',
@@ -86,7 +88,6 @@ const Home: React.FC = () => {
       },
     });
 
-    // Stats animation - smoother with reduced distance
     gsap.from('.stat-item', {
       scrollTrigger: {
         trigger: statsRef.current,
@@ -100,7 +101,6 @@ const Home: React.FC = () => {
       ease: 'power2.out',
     });
 
-    // Features cards - optimized smooth stagger
     gsap.from('.feature-card', {
       scrollTrigger: {
         trigger: featuresRef.current,
@@ -118,20 +118,20 @@ const Home: React.FC = () => {
       clearProps: 'all',
     });
 
-    // CTA section animation - smoother entrance
-    gsap.from('#cta-section', {
-      scrollTrigger: {
-        trigger: '#cta-section',
-        start: 'top 75%',
-        toggleActions: 'play none none none',
-      },
-      scale: 0.95,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-    });
+    if (!isAuthenticated) {
+      gsap.from('#cta-section', {
+        scrollTrigger: {
+          trigger: '#cta-section',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+        },
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      });
+    }
 
-    // Subtle parallax effect - reduced movement for smoothness
     gsap.to('.parallax-slow', {
       scrollTrigger: {
         trigger: containerRef.current,
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
       ease: 'none',
     });
 
-  }, { scope: containerRef });
+  }, { scope: containerRef, dependencies: [isAuthenticated] });
 
   return (
     <div ref={containerRef} className="min-h-screen bg-black relative overflow-hidden">
@@ -159,7 +159,6 @@ const Home: React.FC = () => {
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pb-20 lg:pb-32 lg:pt-12">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            {/* Decorative elements */}
             <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-linear-to-r from-[#32b8c6]/20 to-[#3dcad9]/20 rounded-full blur-3xl"></div>
 
             <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-[#32b8c6]/10 to-[#2a9fac]/10 border border-[#32b8c6]/20 backdrop-blur-xl">
@@ -168,41 +167,75 @@ const Home: React.FC = () => {
             </div>
 
             <h1 id="hero-title" className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black mb-8 leading-tight">
-              <span className="block text-white">Learn Skills.</span>
-              <span className="block text-white">Share Knowledge.</span>
-              <span className="block text-transparent bg-clip-text bg-linear-to-r from-[#32b8c6] via-[#3dcad9] to-[#4de8ff] animate-linear">
-                Grow Together.
-              </span>
+              {isAuthenticated ? (
+                <>
+                  <span className="block text-white">Welcome back,</span>
+                  <span className="block text-transparent bg-clip-text bg-linear-to-r from-[#32b8c6] via-[#3dcad9] to-[#4de8ff]">
+                    {user?.name || 'Learner'}!
+                  </span>
+                  <span className="block text-white mt-2">Continue Your Journey</span>
+                </>
+              ) : (
+                <>
+                  <span className="block text-white">Learn Skills.</span>
+                  <span className="block text-white">Share Knowledge.</span>
+                  <span className="block text-transparent bg-clip-text bg-linear-to-r from-[#32b8c6] via-[#3dcad9] to-[#4de8ff] animate-linear">
+                    Grow Together.
+                  </span>
+                </>
+              )}
             </h1>
 
             <p id="hero-subtitle" className="text-xl sm:text-2xl mb-12 text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Connect with <span className="text-[#32b8c6] font-semibold">experts</span> and{' '}
-              <span className="text-[#32b8c6] font-semibold">learners</span> worldwide.
-              Exchange skills through personalized 1-on-1 sessions.
+              {isAuthenticated ? (
+                "Explore new skills, connect with experts, and track your learning progress"
+              ) : (
+                <>
+                  Connect with <span className="text-[#32b8c6] font-semibold">experts</span> and{' '}
+                  <span className="text-[#32b8c6] font-semibold">learners</span> worldwide.
+                  Exchange skills through personalized 1-on-1 sessions.
+                </>
+              )}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link to="/signup" className="hero-btn">
-                <button className="group relative px-10 py-5 bg-linear-to-r from-[#32b8c6] to-[#2a9fac] text-white font-bold text-lg rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#32b8c6]/50">
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    Get Started Free
-                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <div className="absolute inset-0 bg-linear-to-r from-[#3dcad9] to-[#32b8c6] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/skills/explore" className="hero-btn">
+                    <button className="group px-10 py-5 bg-linear-to-r from-[#32b8c6] to-[#2a9fac] text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:opacity-90 flex items-center gap-2">
+                      <Compass className="w-6 h-6" />
+                      Explore Skills
+                    </button>
+                  </Link>
 
-              <Link to="/skills" className="hero-btn">
-                <button className="group px-10 py-5 backdrop-blur-xl bg-white/5 border-2 border-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/10 hover:border-white/40 transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                  Explore Skills
-                  <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                </button>
-              </Link>
+                  <Link to="/dashboard" className="hero-btn">
+                    <button className="group px-10 py-5 backdrop-blur-xl bg-white/5 border-2 border-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/10 transition-all duration-300 flex items-center gap-2">
+                      Go to Dashboard
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/signup" className="hero-btn">
+                    <button className="group px-10 py-5 bg-linear-to-r from-[#32b8c6] to-[#2a9fac] text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:opacity-90 flex items-center gap-2">
+                      Get Started Free
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
+
+                  <Link to="/skills" className="hero-btn">
+                    <button className="group px-10 py-5 backdrop-blur-xl bg-white/5 border-2 border-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/10 transition-all duration-300 flex items-center gap-2">
+                      Explore Skills
+                      <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
           <span className="text-sm text-gray-400">Scroll to explore</span>
           <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center pt-2">
@@ -215,7 +248,6 @@ const Home: React.FC = () => {
       <section ref={statsRef} className="py-20 relative z-10">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto backdrop-blur-2xl bg-linear-to-br from-white/10 to-white/5 border border-white/20 rounded-3xl p-10 sm:p-16 relative overflow-hidden">
-            {/* Decorative linear */}
             <div className="absolute -top-20 -right-20 w-60 h-60 bg-linear-to-r from-[#32b8c6]/20 to-[#3dcad9]/20 rounded-full blur-3xl"></div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
@@ -261,14 +293,13 @@ const Home: React.FC = () => {
                   key={index}
                   className="feature-card group relative backdrop-blur-2xl bg-linear-to-br from-white/10 to-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/30 transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
                 >
-                  {/* linear overlay on hover */}
                   <div className={`absolute inset-0 bg-linear-to-br ${feature.linear} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
 
                   <div className="relative z-10">
                     <div className={`inline-flex items-center justify-center w-16 h-16 bg-linear-to-br ${feature.linear} rounded-xl mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
                       <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-white group-hover:to-gray-300 transition-all">
+                    <h3 className="text-xl font-bold text-white mb-3">
                       {feature.title}
                     </h3>
                     <p className="text-gray-400 leading-relaxed">
@@ -276,7 +307,6 @@ const Home: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Shine effect */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>
               );
@@ -285,30 +315,31 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section id="cta-section" className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-12 sm:p-20 text-center">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Ready to Start Your
-                <span className="block mt-2">Learning Journey?</span>
-              </h2>
-              <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-                Join learners and experts transforming their skills
-              </p>
-              <Link to="/signup" className="inline-block">
-                <button className="group px-12 py-5 bg-white text-black font-bold text-lg rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto">
-                  Create Free Account
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
+      {/* CTA Section - Only show if not authenticated */}
+      {!isAuthenticated && (
+        <section id="cta-section" className="py-12 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-12 sm:p-20 text-center">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+                  Ready to Start Your
+                  <span className="block mt-2">Learning Journey?</span>
+                </h2>
+                <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                  Join <span className="text-[#32b8c6] font-semibold">10,000+</span> learners and experts transforming their skills
+                </p>
+                <Link to="/signup" className="inline-block">
+                  <button className="group px-12 py-5 bg-linear-to-r from-[#32b8c6] to-[#2a9fac] text-white font-bold text-lg rounded-xl transition-all duration-300 hover:opacity-90 flex items-center gap-3 mx-auto">
+                    Create Free Account
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Add some breathing room */}
       <div className="h-20"></div>
 
       <style>{`

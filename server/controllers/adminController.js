@@ -173,3 +173,17 @@ export const getPlatformStats = catchAsyncErrors(async (req, res, next) => {
     },
   });
 });
+
+export const getPendingSkills = catchAsyncErrors(async (req, res, next) => {
+  const skills = await Skill.find({ 
+    isVerified: false,
+    status: 'pending' 
+  })
+  .populate('userId', 'name avatar')
+  .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    skills,
+  });
+});
