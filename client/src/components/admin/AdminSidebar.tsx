@@ -3,10 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
-  BookOpen,
-  Calendar,
   Award,
-  Settings,
   BarChart3,
   Shield,
 } from 'lucide-react';
@@ -17,18 +14,15 @@ const AdminSidebar: React.FC = () => {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
     { icon: Users, label: 'User Management', path: '/admin/users' },
-    { icon: BookOpen, label: 'Skill Management', path: '/admin/skills' },
-    { icon: Calendar, label: 'Session Management', path: '/admin/sessions' },
     { icon: Award, label: 'Badge Management', path: '/admin/badges' },
-    { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
-    { icon: Shield, label: 'Verification', path: '/admin/verification' },
-    { icon: Settings, label: 'Settings', path: '/admin/settings' },
+    { icon: Shield, label: 'Verify Skills', path: '/admin/verify-skills' },
+    { icon: BarChart3, label: 'Analytics', path: '/admin/stats' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen p-4">
+    <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen p-4 sticky top-0">
       <div className="mb-8">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
           Admin Panel
@@ -44,7 +38,7 @@ const AdminSidebar: React.FC = () => {
               to={item.path}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                 isActive(item.path)
-                  ? 'bg-[#32b8c6]/10 text-[#32b8c6] dark:bg-[#32b8c6]/20'
+                  ? 'bg-[#32b8c6]/10 text-[#32b8c6] dark:bg-[#32b8c6]/20 border border-[#32b8c6]/30'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >

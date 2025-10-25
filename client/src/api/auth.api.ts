@@ -13,22 +13,25 @@ export const logout = () => {
 };
 
 export const getProfile = () => {
-  return axiosInstance.get('/auth/me');
+  return axiosInstance.get('/user/me');
 };
 
 export const verifyEmailOtp = (data: { email: string; otp: string }) => {
   return axiosInstance.post('/auth/verify-email', data); 
 };
 
+export const resendVerificationOtp = (email: string) => {
+  return axiosInstance.post('/auth/resend-verification', { email });
+};
 
 export const sendResetPasswordOtp = (email: string) => {
-  return axiosInstance.post('/auth/send-reset-password-otp', { email });
+  return axiosInstance.post('/auth/password/forgot', { email });
 };
 
 export const verifyResetPasswordOtp = (data: { email: string; otp: string }) => {
-  return axiosInstance.post('/auth/verify-reset-password-otp', data);
+  return axiosInstance.post('/auth/password/verify-otp', data);
 };
 
 export const resetPassword = (data: { email: string; otp: string; newPassword: string }) => {
-  return axiosInstance.post('/auth/reset-password', data);
+  return axiosInstance.post('/auth/password/reset', data);
 };

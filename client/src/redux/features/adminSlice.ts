@@ -15,9 +15,9 @@ interface AdminState {
     totalBadges: number;
     userGrowth: number;
     sessionGrowth: number;
-    pendingVerifications?: number;
-    newSignupsToday?: number;
-    activeSessions?: number;
+    pendingVerifications: number;
+    newSignupsToday: number;
+    activeSessions: number;
   } | null;
   loading: boolean;
   error: string | null;
@@ -34,154 +34,161 @@ const initialState: AdminState = {
 // Async Thunks
 export const getAllUsers = createAsyncThunk(
   'admin/getAllUsers',
-  async (params: any, { rejectWithValue }) => {
-    try {
-      const response = await adminAPI.getAllUsers(params);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async (params: any) => {
+    const response = await adminAPI.getAllUsers(params);
+    return response.data;
   }
 );
 
 export const updateUserStatus = createAsyncThunk(
   'admin/updateUserStatus',
-  async ({ userId, status }: { userId: string; status: 'active' | 'suspended' }, { rejectWithValue }) => {
-    try {
-      const response = await adminAPI.updateUserStatus(userId, status);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async ({ userId, status }: { userId: string; status: string }) => {
+    const response = await adminAPI.suspendUser(userId);
+    return response.data;
   }
 );
 
 export const deleteUser = createAsyncThunk(
   'admin/deleteUser',
-  async (userId: string, { rejectWithValue }) => {
-    try {
-      await adminAPI.deleteUser(userId);
-      return userId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async (userId: string) => {
+    const response = await adminAPI.deleteUser(userId);
+    return response.data;
   }
 );
 
 export const getPendingSkills = createAsyncThunk(
   'admin/getPendingSkills',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await adminAPI.getPendingSkills();
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async () => {
+    const response = await adminAPI.getPendingSkills();
+    return response.data;
   }
 );
 
 export const approveSkill = createAsyncThunk(
   'admin/approveSkill',
-  async (skillId: string, { rejectWithValue }) => {
-    try {
-      await adminAPI.approveSkill(skillId);
-      return skillId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async (skillId: string) => {
+    const response = await adminAPI.verifySkill(skillId, true);
+    return response.data;
   }
 );
 
 export const rejectSkill = createAsyncThunk(
   'admin/rejectSkill',
-  async ({ skillId, reason }: { skillId: string; reason: string }, { rejectWithValue }) => {
-    try {
-      await adminAPI.rejectSkill(skillId, reason);
-      return skillId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async ({ skillId, reason }: { skillId: string; reason: string }) => {
+    const response = await adminAPI.verifySkill(skillId, false);
+    return response.data;
   }
 );
 
 export const getPlatformStats = createAsyncThunk(
   'admin/getPlatformStats',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await adminAPI.getPlatformStats();
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
-    }
+  async () => {
+    const response = await adminAPI.getPlatformStats();
+    return response.data;
   }
 );
 
-// Slice
 const adminSlice = createSlice({
   name: 'admin',
   initialState,
   reducers: {
-    clearAdminError: (state) => {
+    clearError: (state) => {
       state.error = null;
     },
   },
   extraReducers: (builder) => {
-    // Get All Users
-    builder.addCase(getAllUsers.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(getAllUsers.fulfilled, (state, action) => {
-      state.loading = false;
-      state.users = action.payload;
-    });
-    builder.addCase(getAllUsers.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+    builder
+      // Get All Users
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users || action.payload;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch users';
+      })
 
-    // Get Pending Skills
-    builder.addCase(getPendingSkills.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getPendingSkills.fulfilled, (state, action) => {
-      state.loading = false;
-      state.pendingSkills = action.payload;
-    });
-    builder.addCase(getPendingSkills.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+      // Update User Status
+      .addCase(updateUserStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUserStatus.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateUserStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to update user status';
+      })
 
-    // Get Platform Stats
-    builder.addCase(getPlatformStats.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getPlatformStats.fulfilled, (state, action) => {
-      state.loading = false;
-      state.stats = action.payload;
-    });
-    builder.addCase(getPlatformStats.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
+      // Delete User
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to delete user';
+      })
 
-    // Delete User
-    builder.addCase(deleteUser.fulfilled, (state, action) => {
-      state.users = state.users.filter((u) => u.id !== action.payload);
-    });
+      // Get Pending Skills
+      .addCase(getPendingSkills.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPendingSkills.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pendingSkills = action.payload.skills || action.payload;
+      })
+      .addCase(getPendingSkills.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch pending skills';
+      })
 
-    // Approve Skill
-    builder.addCase(approveSkill.fulfilled, (state, action) => {
-      state.pendingSkills = state.pendingSkills.filter((s) => s.id !== action.payload);
-    });
+      // Approve Skill
+      .addCase(approveSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveSkill.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(approveSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to approve skill';
+      })
 
-    // Reject Skill
-    builder.addCase(rejectSkill.fulfilled, (state, action) => {
-      state.pendingSkills = state.pendingSkills.filter((s) => s.id !== action.payload);
-    });
+      // Reject Skill
+      .addCase(rejectSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(rejectSkill.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(rejectSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to reject skill';
+      })
+
+      // Get Platform Stats
+      .addCase(getPlatformStats.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPlatformStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.stats = action.payload.stats || action.payload;
+      })
+      .addCase(getPlatformStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch platform stats';
+      });
   },
 });
 
-export const { clearAdminError } = adminSlice.actions;
+export const { clearError } = adminSlice.actions;
 export default adminSlice.reducer;

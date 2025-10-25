@@ -7,7 +7,7 @@ export const getAllSkills = (params?: {
   page?: number;
   limit?: number;
 }) => {
-  return axiosInstance.get('/skill', { params });
+  return axiosInstance.get('/skill/all', { params });
 };
 
 export const getSkillById = (skillId: string) => {
@@ -21,7 +21,7 @@ export const createSkill = (data: {
   level: string;
   creditsPerHour: number;
 }) => {
-  return axiosInstance.post('/skill', data);
+  return axiosInstance.post('/skill/create', data);
 };
 
 export const updateSkill = (skillId: string, data: any) => {
@@ -33,17 +33,17 @@ export const deleteSkill = (skillId: string) => {
 };
 
 export const getMySkills = () => {
-  return axiosInstance.get('/skill/my-skills');
+  return axiosInstance.get('/skill/my/skills');
 };
 
 export const endorseSkill = (skillId: string, data: { note?: string }) => {
   return axiosInstance.post(`/skill/${skillId}/endorse`, data);
 };
 
-export const getSkillExperts = (skillId: string) => {
-  return axiosInstance.get(`/skill/${skillId}/experts`);
+export const getSkillsByCategory = (category: string) => {
+  return axiosInstance.get(`/skill/category/${category}`);
 };
 
 export const searchSkills = (query: string) => {
-  return axiosInstance.get(`/skill/search?query=${query}`);
+  return axiosInstance.get(`/skill/all?search=${query}`);
 };

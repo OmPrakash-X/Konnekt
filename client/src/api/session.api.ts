@@ -20,32 +20,32 @@ export const bookSession = (data: {
   mode: 'online' | 'offline';
   notes?: string;
 }) => {
-  return axiosInstance.post('/session/book', data);
+  return axiosInstance.post('/session/create', data);
 };
 
 export const cancelSession = (sessionId: string, reason?: string) => {
-  return axiosInstance.post(`/session/${sessionId}/cancel`, { reason });
+  return axiosInstance.put(`/session/${sessionId}/cancel`, { reason });
 };
 
 export const rescheduleSession = (
   sessionId: string,
   data: { date: string; startTime: string }
 ) => {
-  return axiosInstance.put(`/session/${sessionId}/reschedule`, data);
+  return axiosInstance.put(`/session/${sessionId}/update`, data);
 };
 
 export const completeSession = (sessionId: string) => {
-  return axiosInstance.post(`/session/${sessionId}/complete`);
+  return axiosInstance.put(`/session/${sessionId}/complete`);
+};
+
+export const confirmSession = (sessionId: string) => {
+  return axiosInstance.put(`/session/${sessionId}/confirm`);
 };
 
 export const getUpcomingSessions = () => {
-  return axiosInstance.get('/session/upcoming');
+  return axiosInstance.get('/session/my-sessions?status=upcoming');
 };
 
 export const getSessionHistory = (params?: { page?: number; limit?: number }) => {
-  return axiosInstance.get('/session/history', { params });
-};
-
-export const joinSession = (sessionId: string) => {
-  return axiosInstance.post(`/session/${sessionId}/join`);
+  return axiosInstance.get('/session/my-sessions?status=completed', { params });
 };

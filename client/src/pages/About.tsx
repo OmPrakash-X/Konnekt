@@ -85,7 +85,7 @@ const About: React.FC = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-gradient-to-br from-[#32b8c6] to-[#2a9fac] rounded-2xl p-12 text-white">
+        <div className="bg-linear-to-br from-[#32b8c6] to-[#2a9fac] rounded-2xl p-12 text-white">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="text-5xl font-bold mb-2">10K+</p>

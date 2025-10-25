@@ -10,7 +10,7 @@ export const updateProfile = (data: {
   location?: string;
   avatar?: string;
 }) => {
-  return axiosInstance.put('/user/profile', data);
+  return axiosInstance.put('/user/update', data);
 };
 
 export const getMyProfile = () => {
@@ -18,7 +18,7 @@ export const getMyProfile = () => {
 };
 
 export const searchUsers = (query: string) => {
-  return axiosInstance.get(`/user/search?query=${query}`);
+  return axiosInstance.get(`/user/search/users?query=${query}`);
 };
 
 export const getUserStats = (userId: string) => {
@@ -26,13 +26,17 @@ export const getUserStats = (userId: string) => {
 };
 
 export const getUserReviews = (userId: string) => {
-  return axiosInstance.get(`/user/${userId}/reviews`);
+  return axiosInstance.get(`/review/user/${userId}`);
 };
 
-export const becomeExpert = (data: { skills: string[]; bio: string }) => {
-  return axiosInstance.post('/user/become-expert', data);
+export const getAllExperts = () => {
+  return axiosInstance.get('/user/experts/all');
 };
 
-export const updateExpertProfile = (data: any) => {
-  return axiosInstance.put('/user/expert-profile', data);
+export const deleteMyAccount = () => {
+  return axiosInstance.delete('/user/delete');
+};
+
+export const updateNotifications = (data: any) => {
+  return axiosInstance.put('/user/notifications', data);
 };

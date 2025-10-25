@@ -53,85 +53,142 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave, onCancel }) => 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Avatar Upload */}
-      <div className="flex flex-col items-center">
-        <div className="relative group">
-          <Avatar src={avatarPreview} fallback={formData.name} size="xl" />
-          <label
-            htmlFor="avatar-upload"
-            className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
-          >
-            <Camera className="w-8 h-8 text-white" />
-          </label>
-          <input
-            id="avatar-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="hidden"
-          />
+    <div className="min-h-screen bg-black py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+        {/* Glass Container */}
+        <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          {/* linear Accent */}
+          <div className="absolute inset-0 bg-linear-to-br from-[#32b8c6]/10 via-transparent to-purple-500/10 pointer-events-none" />
+          
+          <div className="relative p-8 sm:p-10">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Edit Profile</h2>
+              <p className="text-gray-400">Update your personal information</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Avatar Upload */}
+              <div className="flex flex-col items-center mb-8">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-linear-to-r from-[#32b8c6] to-purple-500 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+                  <div className="relative">
+                    <Avatar src={avatarPreview} fallback={formData.name} size="xl" />
+                    <label
+                      htmlFor="avatar-upload"
+                      className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-all duration-300"
+                    >
+                      <div className="text-center">
+                        <Camera className="w-8 h-8 text-white mx-auto mb-1" />
+                        <span className="text-xs text-white font-medium">Change Photo</span>
+                      </div>
+                    </label>
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-gray-400">
+                  Click to upload new photo
+                </p>
+              </div>
+
+              {/* Form Fields with Glass Effect */}
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <User className="w-4 h-4 inline mr-2 text-[#32b8c6]" />
+                    Full Name
+                  </label>
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]/50 focus:border-[#32b8c6]/50 transition-all duration-300"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <Mail className="w-4 h-4 inline mr-2 text-[#32b8c6]" />
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-gray-400 cursor-not-allowed"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-500">Email cannot be changed</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <MapPin className="w-4 h-4 inline mr-2 text-[#32b8c6]" />
+                    Location
+                  </label>
+                  <input
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="City, Country"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]/50 focus:border-[#32b8c6]/50 transition-all duration-300"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <FileText className="w-4 h-4 inline mr-2 text-[#32b8c6]" />
+                    Bio
+                  </label>
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="Tell us about yourself..."
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]/50 focus:border-[#32b8c6]/50 transition-all duration-300 resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4 pt-6">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 relative group overflow-hidden px-6 py-3 rounded-xl bg-linear-to-r from-[#32b8c6] to-[#28a0ad] text-white font-semibold shadow-lg shadow-[#32b8c6]/25 hover:shadow-xl hover:shadow-[#32b8c6]/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span className="relative z-10">
+                    {isLoading ? 'Saving...' : 'Save Changes'}
+                  </span>
+                  <div className="absolute inset-0 bg-linear-to-r from-[#28a0ad] to-[#32b8c6] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="flex-1 px-6 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white font-semibold hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Click to upload new photo
-        </p>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 -left-20 w-40 h-40 bg-[#32b8c6]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
-
-      {/* Form Fields */}
-      <Input
-        label="Full Name"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        icon={<User className="w-5 h-5" />}
-        required
-      />
-
-      <Input
-        label="Email"
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        icon={<Mail className="w-5 h-5" />}
-        disabled
-        helperText="Email cannot be changed"
-      />
-
-      <Input
-        label="Location"
-        name="location"
-        value={formData.location}
-        onChange={handleChange}
-        icon={<MapPin className="w-5 h-5" />}
-        placeholder="City, Country"
-      />
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <FileText className="w-4 h-4 inline mr-2" />
-          Bio
-        </label>
-        <textarea
-          name="bio"
-          value={formData.bio}
-          onChange={handleChange}
-          rows={4}
-          placeholder="Tell us about yourself..."
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#32b8c6] focus:border-transparent"
-        />
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-3">
-        <Button type="submit" fullWidth isLoading={isLoading}>
-          Save Changes
-        </Button>
-        <Button type="button" variant="outline" fullWidth onClick={onCancel}>
-          Cancel
-        </Button>
-      </div>
-    </form>
+    </div>
   );
 };
 

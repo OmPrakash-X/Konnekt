@@ -22,7 +22,10 @@ interface UserManagementProps {
   onUpdateUser: (userId: string, action: string) => void;
 }
 
-const UserManagement: React.FC<UserManagementProps> = ({ users, onUpdateUser }) => {
+const UserManagement: React.FC<UserManagementProps> = ({
+  users,
+  onUpdateUser,
+}) => {
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [selectedRole, setSelectedRole] = useState<string>('all');
 
@@ -58,11 +61,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onUpdateUser }) 
 
   return (
     <Card>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
           User Management
         </h2>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <div className="flex gap-2">
             {['all', 'user', 'expert', 'admin'].map((role) => (
               <button
@@ -107,74 +110,90 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onUpdateUser }) 
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr
-                key={user.id}
-                className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar src={user.avatar} fallback={user.name} size="sm" />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {user.email}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-3 px-4">
-                  <Badge variant={roleColors[user.role]}>
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </Badge>
-                </td>
-                <td className="py-3 px-4">
-                  <Badge variant={statusColors[user.status]}>
-                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                  </Badge>
-                </td>
-                <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
-                  {user.totalSessions}
-                </td>
-                <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
-                  {new Date(user.joinedDate).toLocaleDateString()}
-                </td>
-                <td className="py-3 px-4 text-right">
-                  <Dropdown
-                    trigger={
-                      <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-                    }
-                    items={[
-                      {
-                        label: 'View Profile',
-                        onClick: () => onUpdateUser(user.id, 'view'),
-                        icon: <Eye className="w-4 h-4" />,
-                      },
-                      {
-                        label: user.status === 'active' ? 'Suspend' : 'Activate',
-                        onClick: () => onUpdateUser(user.id, 'toggle-status'),
-                        icon:
-                          user.status === 'active' ? (
-                            <Ban className="w-4 h-4" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4" />
-                          ),
-                      },
-                      {
-                        label: 'Delete User',
-                        onClick: () => onUpdateUser(user.id, 'delete'),
-                        icon: <XCircle className="w-4 h-4" />,
-                        danger: true,
-                      },
-                    ]}
-                  />
+            {filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No users found
+                  </p>
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredUsers.map((user) => (
+                <tr
+                  key={user.id}
+                  className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                >
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        src={user.avatar}
+                        fallback={user.name}
+                        size="sm"
+                      />
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {user.name}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <Badge variant={roleColors[user.role]}>
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </Badge>
+                  </td>
+                  <td className="py-3 px-4">
+                    <Badge variant={statusColors[user.status]}>
+                      {user.status.charAt(0).toUpperCase() +
+                        user.status.slice(1)}
+                    </Badge>
+                  </td>
+                  <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                    {user.totalSessions}
+                  </td>
+                  <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                    {new Date(user.joinedDate).toLocaleDateString()}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <Dropdown
+                      trigger={
+                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                          <MoreVertical className="w-4 h-4" />
+                        </button>
+                      }
+                      items={[
+                        {
+                          label: 'View Profile',
+                          onClick: () => onUpdateUser(user.id, 'view'),
+                          icon: <Eye className="w-4 h-4" />,
+                        },
+                        {
+                          label:
+                            user.status === 'active' ? 'Suspend' : 'Activate',
+                          onClick: () => onUpdateUser(user.id, 'toggle-status'),
+                          icon:
+                            user.status === 'active' ? (
+                              <Ban className="w-4 h-4" />
+                            ) : (
+                              <CheckCircle className="w-4 h-4" />
+                            ),
+                        },
+                        {
+                          label: 'Delete User',
+                          onClick: () => onUpdateUser(user.id, 'delete'),
+                          icon: <XCircle className="w-4 h-4" />,
+                          danger: true,
+                        },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

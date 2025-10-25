@@ -6,7 +6,7 @@ export const createReview = (data: {
   rating: number;
   comment: string;
 }) => {
-  return axiosInstance.post('/review', data);
+  return axiosInstance.post('/review/create', data);
 };
 
 export const getReviewsByExpert = (expertId: string, params?: {

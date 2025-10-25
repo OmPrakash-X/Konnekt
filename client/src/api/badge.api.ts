@@ -1,7 +1,7 @@
 import axiosInstance from './axios.config';
 
 export const getAllBadges = () => {
-  return axiosInstance.get('/badge');
+  return axiosInstance.get('/badge/all');
 };
 
 export const getBadgeById = (badgeId: string) => {
@@ -16,6 +16,10 @@ export const getUserBadges = (userId: string) => {
   return axiosInstance.get(`/badge/user/${userId}`);
 };
 
+export const getBadgesByCategory = (category: string) => {
+  return axiosInstance.get(`/badge/category/${category}`);
+};
+
 // Admin only
 export const createBadge = (data: {
   name: string;
@@ -23,7 +27,7 @@ export const createBadge = (data: {
   icon: string;
   criteria: string;
 }) => {
-  return axiosInstance.post('/badge', data);
+  return axiosInstance.post('/badge/create', data);
 };
 
 export const updateBadge = (badgeId: string, data: any) => {
@@ -35,5 +39,5 @@ export const deleteBadge = (badgeId: string) => {
 };
 
 export const awardBadge = (data: { userId: string; badgeId: string }) => {
-  return axiosInstance.post('/badge/award', data);
+  return axiosInstance.post('/admin/badge/award', data);
 };

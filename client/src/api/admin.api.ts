@@ -10,12 +10,20 @@ export const getAllUsers = (params?: {
   return axiosInstance.get('/admin/users', { params });
 };
 
-export const updateUserStatus = (userId: string, status: 'active' | 'suspended') => {
-  return axiosInstance.put(`/admin/users/${userId}/status`, { status });
+export const updateUserRole = (userId: string, role: string) => {
+  return axiosInstance.put(`/admin/user/${userId}/role`, { role });
+};
+
+export const suspendUser = (userId: string) => {
+  return axiosInstance.put(`/admin/user/${userId}/suspend`);
+};
+
+export const unsuspendUser = (userId: string) => {
+  return axiosInstance.put(`/admin/user/${userId}/unsuspend`);
 };
 
 export const deleteUser = (userId: string) => {
-  return axiosInstance.delete(`/admin/users/${userId}`);
+  return axiosInstance.delete(`/admin/user/${userId}`);
 };
 
 // Skill Verification
@@ -23,23 +31,16 @@ export const getPendingSkills = () => {
   return axiosInstance.get('/admin/skills/pending');
 };
 
-export const approveSkill = (skillId: string) => {
-  return axiosInstance.post(`/admin/skills/${skillId}/approve`);
+export const verifySkill = (skillId: string, verified: boolean) => {
+  return axiosInstance.put(`/admin/skill/${skillId}/verify`, { verified });
 };
 
-export const rejectSkill = (skillId: string, reason: string) => {
-  return axiosInstance.post(`/admin/skills/${skillId}/reject`, { reason });
+// Badge Management
+export const awardBadge = (data: { userId: string; badgeId: string }) => {
+  return axiosInstance.post('/admin/badge/award', data);
 };
 
 // Platform Stats
 export const getPlatformStats = () => {
   return axiosInstance.get('/admin/stats');
-};
-
-export const getRevenueStats = (params?: { startDate?: string; endDate?: string }) => {
-  return axiosInstance.get('/admin/revenue-stats', { params });
-};
-
-export const getUserGrowthStats = () => {
-  return axiosInstance.get('/admin/user-growth');
 };

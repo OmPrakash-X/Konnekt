@@ -1,8 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, Video, MapPin } from 'lucide-react';
-import Card from '../common/Card';
 import Avatar from '../common/Avatar';
-import Button from '../common/Button';
 
 interface Session {
   id: string;
@@ -25,38 +23,35 @@ interface UpcomingSessionsProps {
 const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({ sessions, onJoin }) => {
   if (sessions.length === 0) {
     return (
-      <Card>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Upcoming Sessions
-        </h3>
-        <div className="text-center py-8">
-          <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-600 dark:text-gray-400">No upcoming sessions</p>
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
+        <h3 className="text-xl font-semibold text-white mb-6">Upcoming Sessions</h3>
+        <div className="text-center py-12">
+          <Calendar className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-400">No upcoming sessions</p>
+          <p className="text-sm text-gray-500 mt-2">Book a session to get started</p>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Upcoming Sessions
-      </h3>
+    <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
+      <h3 className="text-xl font-semibold text-white mb-6">Upcoming Sessions</h3>
       <div className="space-y-4">
         {sessions.map((session) => (
           <div
             key={session.id}
-            className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
+            className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all duration-300 group"
           >
+            {/* Avatar */}
             <Avatar src={session.expert.avatar} fallback={session.expert.name} size="md" />
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900 dark:text-white">
-                {session.title}
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                with {session.expert.name}
-              </p>
-              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
+
+            {/* Session Info */}
+            <div className="flex-1 min-w-0">
+              <h4 className="font-medium text-white mb-1 truncate">{session.title}</h4>
+              <p className="text-sm text-gray-400 mb-2">with {session.expert.name}</p>
+              
+              <div className="flex items-center gap-3 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {session.date}
@@ -72,13 +67,18 @@ const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({ sessions, onJoin })
                 )}
               </div>
             </div>
-            <Button size="sm" onClick={() => onJoin(session.id)}>
+
+            {/* Join Button */}
+            <button
+              onClick={() => onJoin(session.id)}
+              className="px-4 py-2 bg-linear-to-r from-[#32b8c6] to-[#2a9fac] text-white rounded-lg font-medium shadow-lg shadow-[#32b8c6]/25 hover:shadow-xl hover:shadow-[#32b8c6]/40 transition-all duration-300 hover:scale-105 active:scale-95 shrink-0"
+            >
               Join
-            </Button>
+            </button>
           </div>
         ))}
       </div>
-    </Card>
+    </div>
   );
 };
 

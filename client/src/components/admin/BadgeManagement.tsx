@@ -1,4 +1,3 @@
-// BadgeManagement.tsx
 import React from 'react';
 import { Award, Edit, Trash2, Plus } from 'lucide-react';
 import Card from '../common/Card';
@@ -39,48 +38,57 @@ const BadgeManagement: React.FC<BadgeManagementProps> = ({
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {badges.map((badge) => (
-          <div
-            key={badge.id}
-            className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="text-4xl">{badge.icon}</div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => onEdit(badge.id)}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                </button>
-                <button
-                  onClick={() => onDelete(badge.id)}
-                  className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
-                </button>
+      {badges.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">
+            No badges available. Create one to get started.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {badges.map((badge) => (
+            <div
+              key={badge.id}
+              className="relative p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="text-4xl">{badge.icon}</div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onEdit(badge.id)}
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(badge.id)}
+                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  </button>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                {badge.name}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {badge.description}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-500 mb-4">
+                <strong>Criteria:</strong> {badge.criteria}
+              </p>
+
+              <div className="flex items-center justify-between">
+                <Badge variant="info">
+                  <Award className="w-3 h-3" />
+                  {badge.issuedCount} issued
+                </Badge>
               </div>
             </div>
-
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {badge.name}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              {badge.description}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-500 mb-4">
-              <strong>Criteria:</strong> {badge.criteria}
-            </p>
-            <div className="flex items-center justify-between">
-              <Badge variant="info">
-                <Award className="w-3 h-3" />
-                {badge.issuedCount} issued
-              </Badge>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 };

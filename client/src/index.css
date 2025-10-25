@@ -1,13 +1,7 @@
 @import "tailwindcss";
 
-@layer base {
-  /* * {
-    @apply border-border;
-  } */
-  body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
-  }
-}
+
+ 
 
 @layer utilities {
   .animate-in {
@@ -37,4 +31,28 @@
       opacity: 1;
     }
   }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  user-select: none;
+}
+
+/* For Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px; /* adjust thickness */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent; /* fully transparent */
+  border-radius: 10px;
+}
+/* Only visible when scrolling */
+*::-webkit-scrollbar {
+  display: none;
 }

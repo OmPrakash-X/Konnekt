@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getAllBadges, createBadge, updateBadge, deleteBadge } from '../../redux/features/badgeSlice';
 import BadgeManagement from '../../components/admin/BadgeManagement';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import Container from '../../components/layout/Container';
 import Spinner from '../../components/common/Spinner';
 
@@ -16,10 +17,10 @@ const ManageBadges: React.FC = () => {
   const handleAdd = () => {
     // Open modal or navigate to create badge form
     const badgeData = {
-      name: prompt('Badge Name:'),
-      description: prompt('Description:'),
+      name: prompt('Badge Name:') || '',
+      description: prompt('Description:') || '',
       icon: prompt('Icon (emoji):') || '🏆',
-      criteria: prompt('Criteria:'),
+      criteria: prompt('Criteria:') || '',
     };
 
     if (badgeData.name && badgeData.description && badgeData.criteria) {
@@ -56,25 +57,27 @@ const ManageBadges: React.FC = () => {
   }
 
   return (
-    <Container size="full">
-      <div className="py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Badge Management
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Create and manage achievement badges
-          </p>
+    <div className="flex">
+      <AdminSidebar />
+      <Container size="full">
+        <div className="py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Badge Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Create and manage achievement badges
+            </p>
+          </div>
+          <BadgeManagement
+            badges={badges || []}
+            onAdd={handleAdd}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </div>
-
-        <BadgeManagement
-          badges={badges}
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getAllUsers, updateUserStatus, deleteUser } from '../../redux/features/adminSlice';
 import UserManagement from '../../components/admin/UserManagement';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import Container from '../../components/layout/Container';
 import Spinner from '../../components/common/Spinner';
 
@@ -16,12 +17,17 @@ const ManageUsers: React.FC = () => {
   const handleUpdateUser = async (userId: string, action: string) => {
     switch (action) {
       case 'toggle-status':
-        await dispatch(updateUserStatus({ userId, status: 'active' }));
-        dispatch(getAllUsers({})); // Refresh list
+        const user = users.find((u: any) => u.id === userId);
+        if (user) {
+          const newStatus = user.status === 'active' ? 'suspended' : 'active';
+          await dispatch(updateUserStatus({ userId, status: newStatus }));
+          dispatch(getAllUsers({})); // Refresh list
+        }
         break;
       case 'delete':
         if (confirm('Are you sure you want to delete this user?')) {
           await dispatch(deleteUser(userId));
+          dispatch(getAllUsers({})); // Refresh list
         }
         break;
       case 'view':
@@ -39,20 +45,22 @@ const ManageUsers: React.FC = () => {
   }
 
   return (
-    <Container size="full">
-      <div className="py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            User Management
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage all users, experts, and admins
-          </p>
+    <div className="flex">
+      <AdminSidebar />
+      <Container size="full">
+        <div className="py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              User Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Manage all users, experts, and admins
+            </p>
+          </div>
+          <UserManagement users={users || []} onUpdateUser={handleUpdateUser} />
         </div>
-
-        <UserManagement users={users} onUpdateUser={handleUpdateUser} />
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 };
 

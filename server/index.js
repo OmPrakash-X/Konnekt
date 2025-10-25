@@ -43,14 +43,14 @@ app.get("/", (req, res) => {
 });
 
 // ===== API Routes =====
-app.use("/api/auth", AuthRouter);
-app.use("/api/users", UserRouter);
-app.use("/api/admin", AdminRouter);
-app.use("/api/skills", SkillRouter);
-app.use("/api/badges", BadgeRouter);
-app.use("/api/sessions", SessionRouter);
-app.use("/api/reviews", ReviewRouter);
-app.use("/api/transactions", TransactionRouter);
+app.use("/api/v1/auth", AuthRouter);
+app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1/skills", SkillRouter);
+app.use("/api/v1/badges", BadgeRouter);
+app.use("/api/v1/sessions", SessionRouter);
+app.use("/api/v1/reviews", ReviewRouter);
+app.use("/api/v1/transactions", TransactionRouter);
 
 // ===== Server Startup =====
 const port = process.env.PORT || 5000;

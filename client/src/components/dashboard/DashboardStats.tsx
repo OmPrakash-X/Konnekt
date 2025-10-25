@@ -1,6 +1,5 @@
 import React from 'react';
-import { Calendar, TrendingUp, Award, DollarSign, Users, BookOpen } from 'lucide-react';
-import Card from '../common/Card';
+import { Calendar, TrendingUp, Award, DollarSign,  BookOpen, Clock } from 'lucide-react';
 
 interface DashboardStatsProps {
   stats: {
@@ -23,78 +22,75 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
       title: 'Total Sessions',
       value: stats.totalSessions,
       icon: Calendar,
-      color: 'bg-blue-500',
-      change: '+12%',
+      linear: 'from-blue-500 to-blue-600',
     },
     {
       title: 'Completed',
       value: stats.completedSessions,
       icon: TrendingUp,
-      color: 'bg-green-500',
+      linear: 'from-green-500 to-green-600',
     },
     {
       title: 'Upcoming',
       value: stats.upcomingSessions,
-      icon: Calendar,
-      color: 'bg-orange-500',
+      icon: Clock,
+      linear: 'from-orange-500 to-orange-600',
     },
     {
       title: 'Total Hours',
       value: stats.totalHours,
       icon: BookOpen,
-      color: 'bg-purple-500',
+      linear: 'from-purple-500 to-purple-600',
     },
     {
       title: 'Average Rating',
       value: stats.averageRating.toFixed(1),
       icon: Award,
-      color: 'bg-yellow-500',
+      linear: 'from-yellow-500 to-yellow-600',
     },
     {
       title: 'Badges Earned',
       value: stats.badgesEarned,
       icon: Award,
-      color: 'bg-pink-500',
+      linear: 'from-pink-500 to-pink-600',
     },
     {
       title: 'Skills Learned',
       value: stats.skillsLearned,
       icon: BookOpen,
-      color: 'bg-[#32b8c6]',
+      linear: 'from-[#32b8c6] to-[#2a9fac]',
     },
     {
       title: 'Credits Balance',
       value: (stats.creditsEarned || 0) - (stats.creditsSpent || 0),
       icon: DollarSign,
-      color: 'bg-indigo-500',
+      linear: 'from-indigo-500 to-indigo-600',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {statCards.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Card key={index} padding="md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                  {stat.title}
-                </p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {stat.value}
-                </p>
-                {stat.change && (
-                  <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                    {stat.change} from last month
-                  </p>
-                )}
+          <div
+            key={index}
+            className="relative bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 p-6 hover:bg-white/10 transition-all duration-300 group"
+          >
+            {/* linear overlay on hover */}
+            <div className={`absolute inset-0 bg-linear-to-br ${stat.linear} opacity-0 group-hover:opacity-5 rounded-xl transition-opacity duration-300`} />
+            
+            <div className="relative flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm text-gray-400 mb-1">{stat.title}</p>
+                <p className="text-3xl font-bold text-white">{stat.value}</p>
               </div>
-              <div className={`p-4 ${stat.color} rounded-xl`}>
-                <Icon className="w-8 h-8 text-white" />
+              
+              <div className={`p-4 bg-linear-to-br ${stat.linear} rounded-xl shadow-lg`}>
+                <Icon className="w-6 h-6 text-white" />
               </div>
             </div>
-          </Card>
+          </div>
         );
       })}
     </div>
