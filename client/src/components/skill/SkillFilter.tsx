@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Filter, X } from 'lucide-react';
-import Button from '../common/Button';
-import Badge from '../common/Badge';
 
 interface SkillFilterProps {
   categories: string[];
@@ -59,43 +57,42 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
   return (
     <div className="relative">
       {/* Filter Button */}
-      <Button
-        variant="outline"
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative"
+        className="relative px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all flex items-center gap-2"
       >
         <Filter className="w-4 h-4" />
         Filters
         {activeFiltersCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#32b8c6] text-white text-xs rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-black text-xs rounded-full flex items-center justify-center font-semibold">
             {activeFiltersCount}
           </span>
         )}
-      </Button>
+      </button>
 
       {/* Filter Panel */}
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-black/50"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+          <div className="absolute right-0 mt-2 w-80 backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl shadow-xl z-50 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-semibold text-white">
                 Filters
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-gray-400 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Categories */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-300 mb-3">
                 Categories
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -103,10 +100,10 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
                   <button
                     key={category}
                     onClick={() => toggleCategory(category)}
-                    className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       selectedCategories.includes(category)
-                        ? 'bg-[#32b8c6] text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        ? 'bg-white text-black'
+                        : 'bg-white/10 border border-white/20 text-white hover:bg-white/20'
                     }`}
                   >
                     {category}
@@ -116,8 +113,8 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
             </div>
 
             {/* Levels */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-300 mb-3">
                 Difficulty Level
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -125,10 +122,10 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
                   <button
                     key={level}
                     onClick={() => toggleLevel(level)}
-                    className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       selectedLevels.includes(level)
-                        ? 'bg-[#32b8c6] text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        ? 'bg-white text-black'
+                        : 'bg-white/10 border border-white/20 text-white hover:bg-white/20'
                     }`}
                   >
                     {level}
@@ -138,8 +135,8 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
             </div>
 
             {/* Rating */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-300 mb-3">
                 Minimum Rating
               </h4>
               <input
@@ -149,11 +146,11 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
                 step="0.5"
                 value={minRating}
                 onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
               />
-              <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="flex justify-between text-sm text-gray-400 mt-2">
                 <span>0</span>
-                <span className="font-medium text-[#32b8c6]">
+                <span className="font-semibold text-white">
                   {minRating.toFixed(1)}+
                 </span>
                 <span>5</span>
@@ -162,12 +159,18 @@ const SkillFilter: React.FC<SkillFilterProps> = ({
 
             {/* Actions */}
             <div className="flex gap-2">
-              <Button onClick={handleApply} fullWidth>
+              <button
+                onClick={handleApply}
+                className="flex-1 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all"
+              >
                 Apply
-              </Button>
-              <Button onClick={handleClear} variant="outline" fullWidth>
+              </button>
+              <button
+                onClick={handleClear}
+                className="flex-1 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all"
+              >
                 Clear
-              </Button>
+              </button>
             </div>
           </div>
         </>

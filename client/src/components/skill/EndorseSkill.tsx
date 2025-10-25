@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { ThumbsUp, MessageSquare } from 'lucide-react';
-import Button from '../common/Button';
-import Input from '../common/Input';
 
 interface EndorseSkillProps {
   skillId: string;
@@ -36,53 +34,62 @@ const EndorseSkill: React.FC<EndorseSkillProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <h3 className="font-semibold text-white">
             Endorse this skill
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-400">
             {endorsementCount} {endorsementCount === 1 ? 'endorsement' : 'endorsements'}
           </p>
         </div>
         
         {!isEndorsed ? (
-          <Button
+          <button
             onClick={() => setShowNoteInput(!showNoteInput)}
-            variant="outline"
-            size="sm"
+            className="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all flex items-center gap-2"
           >
             <ThumbsUp className="w-4 h-4" />
             Endorse
-          </Button>
+          </button>
         ) : (
-          <Button variant="secondary" size="sm" disabled>
+          <button
+            disabled
+            className="px-4 py-2 bg-white/5 border border-white/10 text-gray-400 rounded-lg flex items-center gap-2 cursor-not-allowed"
+          >
             <ThumbsUp className="w-4 h-4 fill-current" />
             Endorsed
-          </Button>
+          </button>
         )}
       </div>
 
       {showNoteInput && !isEndorsed && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
-          <Input
-            placeholder={`Add a note about ${skillName}...`}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            icon={<MessageSquare className="w-4 h-4" />}
-          />
+        <div className="p-4 bg-white/5 border border-white/10 rounded-lg space-y-3">
+          <div className="relative">
+            <MessageSquare className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder={`Add a note about ${skillName}...`}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
+            />
+          </div>
           <div className="flex gap-2">
-            <Button onClick={handleEndorse} size="sm" isLoading={isLoading}>
-              Submit Endorsement
-            </Button>
-            <Button
+            <button
+              onClick={handleEndorse}
+              disabled={isLoading}
+              className="px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all disabled:opacity-50"
+            >
+              {isLoading ? 'Submitting...' : 'Submit Endorsement'}
+            </button>
+            <button
               onClick={() => setShowNoteInput(false)}
-              variant="ghost"
-              size="sm"
+              className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all"
             >
               Cancel
-            </Button>
+            </button>
           </div>
         </div>
       )}

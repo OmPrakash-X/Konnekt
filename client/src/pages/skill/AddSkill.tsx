@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../redux/hooks';
 import { createSkill } from '../../redux/features/skillSlice';
-import Card from '../../components/common/Card';
-import Input from '../../components/common/Input';
-import Button from '../../components/common/Button';
-import Container from '../../components/layout/Container';
+import { BookOpen, Tag, FileText, DollarSign } from 'lucide-react';
 
 const AddSkill: React.FC = () => {
   const navigate = useNavigate();
@@ -38,46 +35,58 @@ const AddSkill: React.FC = () => {
   const levels = ['Beginner', 'Intermediate', 'Advanced'];
 
   return (
-    <Container>
-      <div className="py-12 max-w-2xl mx-auto">
+    <div className="min-h-screen bg-black py-12 px-4">
+      <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Add New Skill
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-400">
             Share your expertise with others
           </p>
         </div>
 
-        <Card padding="lg">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <Input
-              label="Skill Name *"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., React Development"
-              required
-            />
+            {/* Skill Name */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <BookOpen className="w-4 h-4" />
+                Skill Name *
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., React Development"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
+                required
+              />
+            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {/* Category */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <Tag className="w-4 h-4" />
                 Category *
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
                 required
               >
-                <option value="">Select category</option>
+                <option value="" className="bg-black">Select category</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat} className="bg-black">{cat}</option>
                 ))}
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <FileText className="w-4 h-4" />
                 Description *
               </label>
               <textarea
@@ -85,53 +94,66 @@ const AddSkill: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={4}
                 placeholder="Describe what you'll teach..."
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all resize-none"
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {/* Level */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">
                 Level *
               </label>
               <select
                 value={formData.level}
                 onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
                 required
               >
                 {levels.map((lvl) => (
-                  <option key={lvl} value={lvl}>{lvl}</option>
+                  <option key={lvl} value={lvl} className="bg-black">{lvl}</option>
                 ))}
               </select>
             </div>
 
-            <Input
-              label="Credits Per Hour *"
-              type="number"
-              value={formData.creditsPerHour}
-              onChange={(e) => setFormData({ ...formData, creditsPerHour: Number(e.target.value) })}
-              min={10}
-              max={500}
-              required
-            />
+            {/* Credits */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Credits Per Hour *
+              </label>
+              <input
+                type="number"
+                value={formData.creditsPerHour}
+                onChange={(e) => setFormData({ ...formData, creditsPerHour: Number(e.target.value) })}
+                min={10}
+                max={500}
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
+                required
+              />
+            </div>
 
+            {/* Actions */}
             <div className="flex gap-4">
-              <Button type="submit" fullWidth isLoading={isLoading}>
-                Add Skill
-              </Button>
-              <Button
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50"
+              >
+                {isLoading ? 'Adding...' : 'Add Skill'}
+              </button>
+              <button
                 type="button"
-                variant="outline"
                 onClick={() => navigate(-1)}
+                className="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all"
               >
                 Cancel
-              </Button>
+              </button>
             </div>
           </form>
-        </Card>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 };
 

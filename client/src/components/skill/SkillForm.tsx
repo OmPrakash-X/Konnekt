@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { BookOpen, Tag, FileText, DollarSign } from 'lucide-react';
-import Input from '../common/Input';
-import Button from '../common/Button';
 
 interface SkillFormProps {
   initialData?: {
@@ -63,40 +61,49 @@ const SkillForm: React.FC<SkillFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <Input
-        label="Skill Name"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="e.g., React Development"
-        icon={<BookOpen className="w-5 h-5" />}
-        required
-      />
+      {/* Skill Name */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-300">Skill Name</label>
+        <div className="relative">
+          <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="e.g., React Development"
+            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
+            required
+          />
+        </div>
+      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <Tag className="w-4 h-4 inline mr-2" />
+      {/* Category */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+          <Tag className="w-4 h-4" />
           Category
         </label>
         <select
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]"
+          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
           required
         >
-          <option value="">Select category</option>
+          <option value="" className="bg-black">Select category</option>
           {categories.map((cat) => (
-            <option key={cat} value={cat}>
+            <option key={cat} value={cat} className="bg-black">
               {cat}
             </option>
           ))}
         </select>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <FileText className="w-4 h-4 inline mr-2" />
+      {/* Description */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+          <FileText className="w-4 h-4" />
           Description
         </label>
         <textarea
@@ -105,13 +112,14 @@ const SkillForm: React.FC<SkillFormProps> = ({
           onChange={handleChange}
           rows={4}
           placeholder="Describe your skill and what you can teach..."
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#32b8c6]"
+          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all resize-none"
           required
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      {/* Difficulty Level */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-300">
           Difficulty Level
         </label>
         <div className="flex gap-2">
@@ -120,10 +128,10 @@ const SkillForm: React.FC<SkillFormProps> = ({
               key={level}
               type="button"
               onClick={() => setFormData({ ...formData, level })}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                 formData.level === level
-                  ? 'bg-[#32b8c6] text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? 'bg-white text-black'
+                  : 'bg-white/10 border border-white/20 text-white hover:bg-white/20'
               }`}
             >
               {level}
@@ -132,25 +140,40 @@ const SkillForm: React.FC<SkillFormProps> = ({
         </div>
       </div>
 
-      <Input
-        label="Credits per Hour"
-        type="number"
-        name="creditsPerHour"
-        value={formData.creditsPerHour}
-        onChange={handleChange}
-        min={1}
-        icon={<DollarSign className="w-5 h-5" />}
-        helperText="How many credits learners will pay per hour"
-        required
-      />
+      {/* Credits per Hour */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-300">Credits per Hour</label>
+        <div className="relative">
+          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="number"
+            name="creditsPerHour"
+            value={formData.creditsPerHour}
+            onChange={handleChange}
+            min={1}
+            className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-white/30 transition-all"
+            required
+          />
+        </div>
+        <p className="text-xs text-gray-500">How many credits learners will pay per hour</p>
+      </div>
 
+      {/* Actions */}
       <div className="flex gap-3">
-        <Button type="submit" fullWidth isLoading={isLoading}>
-          {initialData ? 'Update Skill' : 'Add Skill'}
-        </Button>
-        <Button type="button" variant="outline" fullWidth onClick={onCancel}>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="flex-1 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Saving...' : initialData ? 'Update Skill' : 'Add Skill'}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all"
+        >
           Cancel
-        </Button>
+        </button>
       </div>
     </form>
   );
