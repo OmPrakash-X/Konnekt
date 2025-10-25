@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from './redux/hooks';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { loadUser } from './redux/features/authSlice';
 import AppRoutes from './routes/AppRoutes';
 

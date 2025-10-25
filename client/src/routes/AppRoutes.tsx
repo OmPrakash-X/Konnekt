@@ -51,6 +51,8 @@ import ManageUsers from '../pages/admin/ManageUsers';
 import ManageBadges from '../pages/admin/ManageBadges';
 import VerifySkills from '../pages/admin/VerifySkills';
 import PlatformStats from '../pages/admin/PlatformStats';
+import SkillsMapExplorer from '../components/skill/SkillsMapExplorer';
+import MapDemo from '../pages/MapDemo';
 
 
 const AppRoutes: React.FC = () => {
@@ -70,14 +72,15 @@ const AppRoutes: React.FC = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
           {/* Public Expert/Skill Routes */}
           <Route path="/experts" element={<ExpertsList />} />
           <Route path="/experts/:expertId" element={<ExpertProfile />} />
           <Route path="/skills" element={<SkillsExplore />} />
           <Route path="/skills/:skillId" element={<SkillDetails />} />
-
+          <Route path="/explore-map" element={<SkillsMapExplorer />} />
+          <Route path="/map-demo" element={<MapDemo />} />
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             {/* User Routes */}

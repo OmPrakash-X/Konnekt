@@ -44,7 +44,6 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    // OTP Fields for Email Verification & Password Reset
     resetOtp: {
       type: String,
     },
@@ -64,7 +63,6 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // Skills user wants to learn
     learningNeeds: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -104,7 +102,7 @@ const userSchema = new mongoose.Schema(
     // ===== WALLET & CREDIT TOKEN SYSTEM =====
     walletBalance: {
       type: Number,
-      default: 100, // Starting credits for new users
+      default: 100,
       min: 0,
     },
 
@@ -118,15 +116,57 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // ===== LOCATION FOR GEO MATCHING =====
+    // ===== LOCATION FOR GEO MATCHING (UPDATED FOR MAPBOX + MONGODB GEOSPATIAL) =====
     location: {
-      coordinates: {
-        lat: { type: Number },
-        lng: { type: Number },
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
       },
-      city: { type: String, trim: true },
-      area: { type: String, trim: true },
-      country: { type: String, default: "India" },
+      coordinates: {
+        type: [Number], // [longitude, latitude] - ORDER MATTERS!
+        default: [0, 0],
+        validate: {
+          validator: function(v) {
+            return v.length === 2 && 
+                   v[0] >= -180 && v[0] <= 180 && // longitude range
+                   v[1] >= -90 && v[1] <= 90;     // latitude range
+          },
+          message: 'Coordinates must be [longitude, latitude] with valid ranges'
+        }
+      },
+      address: {
+        type: String,
+        trim: true,
+        default: ""
+      },
+      city: { 
+        type: String, 
+        trim: true,
+        default: ""
+      },
+      area: { 
+        type: String, 
+        trim: true,
+        default: ""
+      },
+      state: {
+        type: String,
+        trim: true,
+        default: ""
+      },
+      country: { 
+        type: String, 
+        default: "India" 
+      },
+      postalCode: {
+        type: String,
+        trim: true
+      },
+      lastUpdated: {
+        type: Date,
+        default: Date.now
+      }
     },
 
     // ===== ACCESSIBILITY + INCLUSIVITY SUPPORT =====
@@ -159,8 +199,8 @@ const userSchema = new mongoose.Schema(
       ],
       timeSlots: [
         {
-          start: String, // "09:00"
-          end: String, // "17:00"
+          start: String,
+          end: String,
         },
       ],
       timezone: {
@@ -189,7 +229,7 @@ const userSchema = new mongoose.Schema(
 
     profileCompleteness: {
       type: Number,
-      default: 0, // percentage 0-100
+      default: 0,
     },
 
     // ===== ACCOUNT STATUS =====
@@ -210,7 +250,6 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // Expert-specific fields
     expertProfile: {
       isExpert: {
         type: Boolean,
@@ -221,15 +260,15 @@ const userSchema = new mongoose.Schema(
       },
       verifiedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Admin who verified
+        ref: "User",
       },
-      expertiseAreas: [String], // Main areas of expertise
+      expertiseAreas: [String],
       yearsOfExperience: {
         type: Number,
         min: 0,
       },
       hourlyRate: {
-        type: Number, // Credits per hour
+        type: Number,
         default: 20,
       },
       certificationDocuments: [
@@ -275,15 +314,18 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-// Index for faster geolocation queries
-userSchema.index({
-  "location.coordinates.lat": 1,
-  "location.coordinates.lng": 1,
-});
+// ===== UPDATED INDEXES FOR GEOSPATIAL QUERIES =====
+
+// 2dsphere index for MongoDB geospatial queries (REQUIRED for $near queries)
+userSchema.index({ 'location': '2dsphere' });
+
+// Compound indexes for better query performance
+userSchema.index({ 'location.city': 1, accountStatus: 1 });
+userSchema.index({ 'location.coordinates': '2dsphere', accountStatus: 1 });
 
 // Index for search
 userSchema.index({ name: "text", bio: "text" });
@@ -294,6 +336,14 @@ userSchema.index({ role: 1, "expertProfile.isExpert": 1 });
 // Virtual for full profile URL
 userSchema.virtual("profileUrl").get(function () {
   return `/profile/${this._id}`;
+});
+
+// Pre-save middleware to update lastUpdated on location change
+userSchema.pre('save', function(next) {
+  if (this.isModified('location.coordinates')) {
+    this.location.lastUpdated = new Date();
+  }
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
