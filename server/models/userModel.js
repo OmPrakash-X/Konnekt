@@ -39,11 +39,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  verificationToken: {
+  
+  // OTP Fields for Email Verification & Password Reset
+  resetOtp: {
     type: String,
   },
-  verificationTokenExpires: {
+  otpExpires: {
     type: Date,
+  },
+  isOtpVerified: {
+    type: Boolean,
+    default: false,
   },
 
   //  Skill & Reputation System
