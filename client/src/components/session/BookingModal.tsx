@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { X, Calendar, Clock, Video, MapPin, CreditCard, AlertCircle, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 interface BookingModalProps {
   isOpen: boolean;

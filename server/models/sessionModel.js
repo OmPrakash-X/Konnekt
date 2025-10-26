@@ -18,7 +18,7 @@ const sessionSchema = new mongoose.Schema(
     skill: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Skill",
-      required: true,
+      required: false,
     },
 
     // Scheduling
@@ -27,7 +27,7 @@ const sessionSchema = new mongoose.Schema(
       required: true,
     },
     startTime: {
-      type: String, // "14:30" format
+      type: String, // "09:00 AM" format
       required: true,
     },
     endTime: {
@@ -37,6 +37,7 @@ const sessionSchema = new mongoose.Schema(
       type: Number, // in minutes
       required: true,
       default: 60,
+      enum: [30, 60, 90, 120], // ✅ Added validation
     },
 
     // Payment
@@ -116,7 +117,24 @@ const sessionSchema = new mongoose.Schema(
 // Indexes
 sessionSchema.index({ provider: 1, status: 1 });
 sessionSchema.index({ learner: 1, status: 1 });
-sessionSchema.index({ scheduledDate: 1 });
+sessionSchema.index({ scheduledDate: 1, startTime: 1 });
+
+// ✅ ADDED: Method to check slot availability
+sessionSchema.statics.isSlotAvailable = async function(providerId, scheduledDate, startTime) {
+  const existing = await this.findOne({
+    provider: providerId,
+    scheduledDate: new Date(scheduledDate),
+    startTime: startTime,
+    status: { $in: ['pending', 'confirmed'] }
+  });
+  return !existing;
+};
+
+// ✅ ADDED: Virtual for session date/time display
+sessionSchema.virtual('dateTimeDisplay').get(function() {
+  const date = new Date(this.scheduledDate);
+  return `${date.toLocaleDateString()} at ${this.startTime}`;
+});
 
 const Session = mongoose.model("Session", sessionSchema);
 export default Session;

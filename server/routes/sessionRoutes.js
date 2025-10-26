@@ -7,6 +7,7 @@ import {
   completeSession,
   cancelSession,
   updateSession,
+  getAvailableSlots, // ✅ Added
 } from "../controllers/sessionController.js";
 import { isAuthenticated } from "../middlewares/isAuth.js";
 
@@ -17,7 +18,9 @@ router.use(isAuthenticated);
 
 // Session CRUD
 router.post("/create", createSession);
+router.post("/book", createSession); // ✅ Alias for frontend compatibility
 router.get("/my-sessions", getMySessions);
+router.get("/available", getAvailableSlots); // ✅ Added for frontend
 router.get("/:id", getSessionById);
 router.put("/:id/update", updateSession);
 
