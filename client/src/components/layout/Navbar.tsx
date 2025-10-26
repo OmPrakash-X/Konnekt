@@ -147,7 +147,7 @@ const Navbar: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className=" items-center gap-3 hidden md:flex">
                   <Link
                     to="/login"
                     className="px-5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white transition-all duration-300 font-medium"
