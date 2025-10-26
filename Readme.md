@@ -7,7 +7,10 @@ A full-stack web application that connects people to exchange skills, book sessi
 ## [🚀 Live Demo](https://konnekt-8mwt.onrender.com/)
 
 
-
+**Render’s free tier does not allow direct SMTP outbound connections, which prevents email delivery using services like Gmail SMTP.
+As a result, features requiring Nodemailer will not work in production on Render free tier.
+Local development → Emails work fine
+Render free tier → SMTP blocked → Emails fail**
 
 ### 🔑 Demo Credentials
 
