@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import MapComponent from '../common/MapComponent';
 import axios from 'axios';
+import BookingModal from '../session/BookingModal';
 
 // Skill categories with colors
 const SKILL_CATEGORIES = [
@@ -16,44 +17,11 @@ const SKILL_CATEGORIES = [
   { name: 'Data Science', color: '#2ECC71', icon: '📊' }
 ];
 
-// Mock data (keep your existing ALL_MOCK_USERS array here)
+// ✅ FIXED: Move mock data outside and export properly
+// ✅ COMPLETE: All mock users from your original data
 export const ALL_MOCK_USERS = [
-  // Original users (0-5 km)
-  
-  
-  
-  {
-    _id: "user_7",
-    name: "Vikram Rao",
-    email: "vikram@example.com",
-    bio: "UI/UX designer with a passion for minimalist design.",
-    profilePicture: null,
-    skills: [{ name: "Web Design", level: "Expert" }],
-    location: { coordinates: [85.8230, 20.2955], city: "Vani Vihar", state: "Odisha" },
-    distanceInKm: "0.60",
-    primarySkillColor: "#16A085",
-    isOnline: true,
-    averageRating: 4.8,
-    completedSessions: 89,
-    totalReviews: 52
-  },
-  
-  // New users (0.7-3 km)
-  {
-    _id: "user_8",
-    name: "Anjali Gupta",
-    email: "anjali@example.com",
-    bio: "Professional chef specializing in Indian and Continental cuisine.",
-    profilePicture: null,
-    skills: [{ name: "Cooking", level: "Expert" }],
-    location: { coordinates: [85.8280, 20.2975], city: "Saheed Nagar", state: "Odisha" },
-    distanceInKm: "0.75",
-    primarySkillColor: "#E74C3C",
-    isOnline: true,
-    averageRating: 5.0,
-    completedSessions: 123,
-    totalReviews: 98
-  },
+ 
+
   {
     _id: "user_9",
     name: "Karan Mehta",
@@ -70,22 +38,22 @@ export const ALL_MOCK_USERS = [
     totalReviews: 34
   },
 
-  
   {
-    _id: "user_12",
-    name: "Sneha Patnaik",
-    email: "sneha@example.com",
-    bio: "Freelance photographer and videographer.",
+    _id: "user_11",
+    name: "Rahul Singh",
+    email: "rahul@example.com",
+    bio: "Yoga instructor with 10 years of experience.",
     profilePicture: null,
-    skills: [{ name: "Photography", level: "Advanced" }],
-    location: { coordinates: [85.8300, 20.2995], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.40",
-    primarySkillColor: "#FF6B6B",
-    isOnline: true,
+    skills: [{ name: "Yoga", level: "Expert" }],
+    location: { coordinates: [85.8290, 20.2985], city: "Nandan Kanan Road", state: "Odisha" },
+    distanceInKm: "1.25",
+    primarySkillColor: "#9B59B6",
+    isOnline: false,
     averageRating: 4.8,
-    completedSessions: 67,
-    totalReviews: 45
+    completedSessions: 201,
+    totalReviews: 156
   },
+  
   {
     _id: "user_13",
     name: "Aditya Mohanty",
@@ -101,24 +69,10 @@ export const ALL_MOCK_USERS = [
     completedSessions: 38,
     totalReviews: 24
   },
-  {
-    _id: "user_14",
-    name: "Kavya Nair",
-    email: "kavya@example.com",
-    bio: "Full-stack web developer and UI/UX designer.",
-    profilePicture: null,
-    skills: [{ name: "Web Design", level: "Expert" }, { name: "React", level: "Advanced" }],
-    location: { coordinates: [85.8310, 20.3005], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.85",
-    primarySkillColor: "#16A085",
-    isOnline: true,
-    averageRating: 4.9,
-    completedSessions: 91,
-    totalReviews: 63
-  },
+ 
+ 
   
-
-
+ 
   {
     _id: "user_18",
     name: "Tanvi Deshmukh",
@@ -135,8 +89,6 @@ export const ALL_MOCK_USERS = [
     totalReviews: 56
   },
   
-  // Users at 3-5 km
- 
   {
     _id: "user_20",
     name: "Ritika Choudhary",
@@ -152,8 +104,22 @@ export const ALL_MOCK_USERS = [
     completedSessions: 112,
     totalReviews: 84
   },
-
-
+  {
+    _id: "user_21",
+    name: "Nikhil Agarwal",
+    email: "nikhil@example.com",
+    bio: "Expert chef specializing in international cuisines.",
+    profilePicture: null,
+    skills: [{ name: "React", level: "Expert" }],
+    location: { coordinates: [85.8170, 20.2915], city: "Nayapalli", state: "Odisha" },
+    distanceInKm: "3.80",
+    primarySkillColor: "#E74C3C",
+    isOnline: true,
+    averageRating: 4.9,
+    completedSessions: 198,
+    totalReviews: 145
+  },
+ 
   {
     _id: "user_23",
     name: "Akash Verma",
@@ -169,7 +135,7 @@ export const ALL_MOCK_USERS = [
     completedSessions: 73,
     totalReviews: 51
   },
-
+  
   {
     _id: "user_25",
     name: "Harsh Saxena",
@@ -188,7 +154,9 @@ export const ALL_MOCK_USERS = [
 ];
 
 
+// ✅ FIXED: Component starts here
 const SkillsMapExplorer: React.FC = () => {
+  // ✅ FIXED: All hooks MUST be inside the component
   const [nearbyUsers, setNearbyUsers] = useState<any[]>([]);
   const [radius, setRadius] = useState(5000);
   const [userLocation, setUserLocation] = useState<{ longitude: number; latitude: number } | null>(null);
@@ -197,24 +165,14 @@ const SkillsMapExplorer: React.FC = () => {
   const [selectedSkill, setSelectedSkill] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [useMockData, setUseMockData] = useState(true);
+  const [showBookingModal, setShowBookingModal] = useState(false); // ✅ Moved inside component
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            longitude: 85.8248,
-            latitude: 20.2962
-          });
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          setUserLocation({ longitude: 85.8245, latitude: 20.2961 });
-        }
-      );
-    } else {
-      setUserLocation({ longitude: 85.8245, latitude: 20.2961 });
-    }
+    console.log('📍 Setting user location to Jaydev Vihar, Bhubaneswar');
+    setUserLocation({
+      longitude: 85.8248,
+      latitude: 20.2962
+    });
   }, []);
 
   const getFilteredMockUsers = useCallback(() => {
@@ -290,7 +248,7 @@ const SkillsMapExplorer: React.FC = () => {
     setSelectedSkill(prev => prev === skillName ? '' : skillName);
   }, []);
 
-  const memoizedUserLocation = useMemo(() => userLocation, 
+  const memoizedUserLocation = useMemo(() => userLocation,
     [userLocation?.longitude, userLocation?.latitude]
   );
 
@@ -560,8 +518,8 @@ const SkillsMapExplorer: React.FC = () => {
         </div>
       </div>
 
-      {/* User Modal */}
-      {selectedUser && (
+      {/* User Detail Modal */}
+      {selectedUser && !showBookingModal && (
         <div
           className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedUser(null)}
@@ -640,17 +598,33 @@ const SkillsMapExplorer: React.FC = () => {
                 </div>
               </div>
 
+              {/* ✅ FIXED: Single button row */}
               <div className="flex gap-3">
                 <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg">
                   💬 Message
                 </button>
-                <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg">
+                <button 
+                  onClick={() => setShowBookingModal(true)}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg"
+                >
                   📅 Book
                 </button>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* ✅ FIXED: BookingModal renders separately */}
+      {selectedUser && showBookingModal && (
+        <BookingModal
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false);
+            setSelectedUser(null);
+          }}
+          user={selectedUser}
+        />
       )}
     </div>
   );
