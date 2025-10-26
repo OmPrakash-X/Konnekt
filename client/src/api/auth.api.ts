@@ -31,7 +31,6 @@ export const sendResetPasswordOtp = (email: string) => {
 export const verifyResetPasswordOtp = (data: { email: string; otp: string }) => {
   return axiosInstance.post('/auth/password/verify-otp', data);
 };
-
-export const resetPassword = (data: { email: string; otp: string; newPassword: string }) => {
+export const resetPassword = (data: { email: string; password: string }) => {
   return axiosInstance.post('/auth/password/reset', data);
 };
