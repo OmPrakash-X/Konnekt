@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, Settings, Shield, Sparkles } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Shield, Sparkles, BookOpen, Home } from 'lucide-react';
 import Avatar from '../common/Avatar';
 import Dropdown from '../common/Dropdown';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -20,7 +20,6 @@ const Navbar: React.FC = () => {
   };
 
   const handleProfileClick = () => {
-    // Navigate to own profile using user's ID
     const userId = user?.id || user?._id;
     if (userId) {
       navigate(`/profile/${userId}`);
@@ -49,6 +48,15 @@ const Navbar: React.FC = () => {
           },
         ]
       : []),
+    ...(user?.role === 'expert'
+      ? [
+          {
+            label: 'Expert Dashboard',
+            onClick: () => navigate('/expert/dashboard'),
+            icon: <BookOpen className="w-4 h-4" />,
+          },
+        ]
+      : []),
     {
       label: 'Logout',
       onClick: handleLogout,
@@ -59,17 +67,14 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Navbar with Enhanced Glass Effect */}
       <nav className="sticky top-0 z-50 bg-black/60 backdrop-blur-2xl border-b border-white/10 shadow-2xl shadow-black/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo with Glow */}
             <Link to="/" className="flex items-center gap-3 group">
               <div className="relative">
-                {/* Animated glow */}
                 <div className="absolute inset-0 bg-linear-to-br from-[#32b8c6] via-purple-500 to-pink-500 rounded-xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
 
-                {/* Logo container */}
                 <div className="relative w-12 h-12 rounded-xl bg-black/80 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-2xl overflow-hidden group-hover:scale-110 transition-transform duration-300">
                   <img
                     src={KonnektLogo}
@@ -90,6 +95,9 @@ const Navbar: React.FC = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-2">
+              <NavLink to="/" icon={<Home className="w-4 h-4" />}>
+                Home
+              </NavLink>
               <NavLink to="/skills" icon={<Sparkles className="w-4 h-4" />}>
                 Explore Skills
               </NavLink>
@@ -107,13 +115,24 @@ const Navbar: React.FC = () => {
                   <span className="relative z-10 font-medium">Admin</span>
                 </Link>
               )}
+
+              {/* Expert Badge - Only for experts */}
+              {user?.role === 'expert' && (
+                <Link
+                  to="/expert/dashboard"
+                  className="group relative px-4 py-2 rounded-xl bg-linear-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/50 transition-all duration-300 flex items-center gap-2 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-linear-to-r from-emerald-500/0 to-teal-500/0 group-hover:from-emerald-500/20 group-hover:to-teal-500/20 transition-all duration-300" />
+                  <BookOpen className="w-4 h-4 relative z-10" />
+                  <span className="relative z-10 font-medium">Expert</span>
+                </Link>
+              )}
             </div>
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-3">
               {isAuthenticated ? (
                 <div className="relative group">
-                  {/* Avatar glow effect */}
                   <div className="absolute inset-0 bg-linear-to-r from-[#32b8c6] to-purple-500 rounded-full blur-md opacity-0 group-hover:opacity-75 transition-opacity duration-300" />
 
                   <Dropdown
@@ -166,6 +185,9 @@ const Navbar: React.FC = () => {
           {isMobileMenuOpen && (
             <div className="md:hidden py-4 border-t border-white/10 animate-in slide-in-from-top duration-300">
               <div className="flex flex-col gap-2">
+                <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  Home
+                </MobileNavLink>
                 <MobileNavLink to="/skills" onClick={() => setIsMobileMenuOpen(false)}>
                   Explore Skills
                 </MobileNavLink>
@@ -187,24 +209,15 @@ const Navbar: React.FC = () => {
                   </Link>
                 )}
 
-                {!isAuthenticated && (
-                  <>
-                    <div className="h-px bg-linear-to-r from-transparent via-white/20 to-transparent my-2" />
-                    <Link
-                      to="/login"
-                      className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white rounded-xl transition-all duration-300"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="px-4 py-3 bg-linear-to-r from-[#32b8c6] to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-[#32b8c6]/30 hover:shadow-xl transition-all duration-300"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                  </>
+                {user?.role === 'expert' && (
+                  <Link
+                    to="/expert/dashboard"
+                    className="px-4 py-3 bg-linear-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 rounded-xl transition-all duration-300 flex items-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    Expert Dashboard
+                  </Link>
                 )}
               </div>
             </div>
