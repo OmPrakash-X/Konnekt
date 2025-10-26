@@ -4,7 +4,7 @@ import { Calendar, Clock, Video, MapPin, User, DollarSign, MessageSquare } from 
 import Card from '../common/Card';
 import Badge from '../common/Badge';
 import Avatar from '../common/Avatar';
-import Button from '../common/Button';
+
 
 interface SessionDetailsProps {
   session: {

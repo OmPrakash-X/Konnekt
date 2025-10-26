@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getSessionById, cancelSession } from '../../redux/features/sessionSlice';
-import { Calendar, Clock, MapPin, Video, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, Video } from 'lucide-react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';

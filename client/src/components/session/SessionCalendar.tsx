@@ -1,7 +1,6 @@
 // SessionCalendar.tsx
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Badge from '../common/Badge';
 import Card from '../common/Card';
 
 interface SessionCalendarProps {

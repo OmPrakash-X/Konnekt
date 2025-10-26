@@ -26,7 +26,6 @@ interface BookSessionProps {
 }
 
 const BookSession: React.FC<BookSessionProps> = ({
-  expert,
   skill,
   availableSlots,
   onBook,

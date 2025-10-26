@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import MapComponent from '../common/MapComponent';
+import MapComponent from '../../components/common/MapComponent';
 import axios from 'axios';
 
 // Skill categories with colors

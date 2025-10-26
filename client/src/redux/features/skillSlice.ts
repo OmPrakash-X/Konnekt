@@ -294,7 +294,7 @@ const skillSlice = createSlice({
       .addCase(endorseSkill.pending, (state) => {
         state.loading = true;
       })
-      .addCase(endorseSkill.fulfilled, (state, action) => {
+      .addCase(endorseSkill.fulfilled, (state) => {
         state.loading = false;
         // Optionally update the current skill if needed
       })

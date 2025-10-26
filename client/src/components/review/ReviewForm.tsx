@@ -9,7 +9,7 @@ interface ReviewFormProps {
   onCancel?: () => void;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ sessionId, onSubmit, onCancel }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({  onSubmit, onCancel }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState('');

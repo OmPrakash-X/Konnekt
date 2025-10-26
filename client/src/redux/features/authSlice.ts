@@ -24,8 +24,6 @@ interface User {
     icon: string;
   }>;
   isExpert?: boolean;
-
-  // ADD THESE MISSING PROPERTIES:
   averageRating?: number;
   completedSessions?: number;
   skills?: Array<string | { name: string; level?: string }>;
@@ -94,7 +92,6 @@ const initialState: AuthState = {
   tempEmail: null,
 };
 
-// Helper function to transform user data
 const transformUserData = (userData: any): User => {
   return {
     ...userData,
@@ -147,7 +144,7 @@ export const signup = createAsyncThunk(
   }
 );
 
-// Load User (called on app mount)
+// Load User
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
   async (_, { rejectWithValue }) => {
@@ -211,7 +208,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearAuthError: (state) => {
       state.error = null;
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
@@ -222,7 +219,6 @@ const authSlice = createSlice({
     clearTempEmail: (state) => {
       state.tempEmail = null;
     },
-    // Manual logout (clear state only)
     logoutLocal: (state) => {
       console.log("🧹 Clearing local auth state");
       state.user = null;
@@ -233,7 +229,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // ===== LOGIN =====
+    // LOGIN
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -254,7 +250,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // ===== SIGNUP =====
+    // SIGNUP
     builder
       .addCase(signup.pending, (state) => {
         state.loading = true;
@@ -270,7 +266,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // ===== LOAD USER =====
+    // LOAD USER
     builder
       .addCase(loadUser.pending, (state) => {
         state.loading = true;
@@ -290,7 +286,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // ===== LOGOUT =====
+    // LOGOUT
     builder
       .addCase(logout.pending, (state) => {
         state.loading = true;
@@ -304,7 +300,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(logout.rejected, (state) => {
-        // Even if logout fails on backend, clear local state
         state.loading = false;
         state.user = null;
         state.token = null;
@@ -312,7 +307,7 @@ const authSlice = createSlice({
         state.tempEmail = null;
       });
 
-    // ===== VERIFY EMAIL =====
+    // VERIFY EMAIL
     builder
       .addCase(verifyEmail.pending, (state) => {
         state.loading = true;
@@ -337,6 +332,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, updateUser, clearTempEmail, logoutLocal } =
-  authSlice.actions;
+
+export const { clearAuthError, updateUser, clearTempEmail, logoutLocal } = authSlice.actions;
+
 export default authSlice.reducer;

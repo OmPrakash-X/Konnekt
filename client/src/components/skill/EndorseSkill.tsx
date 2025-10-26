@@ -13,7 +13,6 @@ interface EndorseSkillProps {
 const EndorseSkill: React.FC<EndorseSkillProps> = ({
   skillId,
   skillName,
-  userId,
   isEndorsed = false,
   endorsementCount,
   onEndorse,

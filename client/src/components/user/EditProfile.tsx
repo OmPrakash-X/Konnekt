@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { User, Mail, MapPin, FileText, Camera } from 'lucide-react';
-import Input from '../common/Input';
-import Button from '../common/Button';
 import Avatar from '../common/Avatar';
 
 interface EditProfileProps {
