@@ -17,176 +17,113 @@ const SKILL_CATEGORIES = [
 ];
 
 // Mock data (keep your existing ALL_MOCK_USERS array here)
-export const ALL_MOCK_USERS = [
-  // Original users (0-5 km)
-  
-  
-  
+const ALL_MOCK_USERS = [
+  {
+    _id: "user_1",
+    name: "Arjun Patel",
+    email: "arjun@example.com",
+    bio: "Full-stack developer with 5 years of experience.",
+    profilePicture: null,
+    skills: [{ name: "JavaScript", level: "Expert" }, { name: "React", level: "Expert" }],
+    location: { coordinates: [85.8250, 20.2965], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.05",
+    primarySkillColor: "#F7DF1E",
+    isOnline: true,
+    averageRating: 4.9,
+    completedSessions: 78,
+    totalReviews: 45
+  },
+  {
+    _id: "user_2",
+    name: "Priya Sharma",
+    email: "priya@example.com",
+    bio: "Data scientist passionate about AI/ML.",
+    profilePicture: null,
+    skills: [{ name: "Python", level: "Expert" }],
+    location: { coordinates: [85.8235, 20.2970], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.15",
+    primarySkillColor: "#3776AB",
+    isOnline: true,
+    averageRating: 5.0,
+    completedSessions: 92,
+    totalReviews: 67
+  },
+  {
+    _id: "user_3",
+    name: "Sanjay Kumar",
+    email: "sanjay@example.com",
+    bio: "Professional photographer.",
+    profilePicture: null,
+    skills: [{ name: "Photography", level: "Expert" }],
+    location: { coordinates: [85.8260, 20.2955], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.20",
+    primarySkillColor: "#FF6B6B",
+    isOnline: false,
+    averageRating: 4.8,
+    completedSessions: 156,
+    totalReviews: 89
+  },
+  {
+    _id: "user_4",
+    name: "Neha Reddy",
+    email: "neha@example.com",
+    bio: "React Native developer and yoga instructor.",
+    profilePicture: null,
+    skills: [{ name: "React", level: "Expert" }],
+    location: { coordinates: [85.8345, 20.3061], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "1.5",
+    primarySkillColor: "#61DAFB",
+    isOnline: true,
+    averageRating: 4.7,
+    completedSessions: 34,
+    totalReviews: 23
+  },
+  {
+    _id: "user_5",
+    name: "Rahul Mishra",
+    email: "rahul@example.com",
+    bio: "Professional guitarist.",
+    profilePicture: null,
+    skills: [{ name: "Guitar", level: "Expert" }],
+    location: { coordinates: [85.8145, 20.2861], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "2.3",
+    primarySkillColor: "#FF8C42",
+    isOnline: false,
+    averageRating: 4.9,
+    completedSessions: 67,
+    totalReviews: 41
+  },
+  {
+    _id: "user_6",
+    name: "Divya Singh",
+    email: "divya@example.com",
+    bio: "Backend developer.",
+    profilePicture: null,
+    skills: [{ name: "Node.js", level: "Expert" }],
+    location: { coordinates: [85.8395, 20.3011], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "3.1",
+    primarySkillColor: "#339933",
+    isOnline: true,
+    averageRating: 4.6,
+    completedSessions: 45,
+    totalReviews: 28
+  },
   {
     _id: "user_7",
     name: "Vikram Rao",
     email: "vikram@example.com",
-    bio: "UI/UX designer with a passion for minimalist design.",
+    bio: "UI/UX designer.",
     profilePicture: null,
     skills: [{ name: "Web Design", level: "Expert" }],
-    location: { coordinates: [85.8230, 20.2955], city: "Vani Vihar", state: "Odisha" },
-    distanceInKm: "0.60",
+    location: { coordinates: [85.8095, 20.2811], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "4.8",
     primarySkillColor: "#16A085",
     isOnline: true,
     averageRating: 4.8,
     completedSessions: 89,
     totalReviews: 52
-  },
-  
-  // New users (0.7-3 km)
-  {
-    _id: "user_8",
-    name: "Anjali Gupta",
-    email: "anjali@example.com",
-    bio: "Professional chef specializing in Indian and Continental cuisine.",
-    profilePicture: null,
-    skills: [{ name: "Cooking", level: "Expert" }],
-    location: { coordinates: [85.8280, 20.2975], city: "Saheed Nagar", state: "Odisha" },
-    distanceInKm: "0.75",
-    primarySkillColor: "#E74C3C",
-    isOnline: true,
-    averageRating: 5.0,
-    completedSessions: 123,
-    totalReviews: 98
-  },
-  {
-    _id: "user_9",
-    name: "Karan Mehta",
-    email: "karan@example.com",
-    bio: "Python automation expert and data analyst.",
-    profilePicture: null,
-    skills: [{ name: "Python", level: "Expert" }, { name: "Data Science", level: "Advanced" }],
-    location: { coordinates: [85.8220, 20.2945], city: "Vani Vihar", state: "Odisha" },
-    distanceInKm: "0.90",
-    primarySkillColor: "#3776AB",
-    isOnline: true,
-    averageRating: 4.7,
-    completedSessions: 56,
-    totalReviews: 34
-  },
-
-  
-  {
-    _id: "user_12",
-    name: "Sneha Patnaik",
-    email: "sneha@example.com",
-    bio: "Freelance photographer and videographer.",
-    profilePicture: null,
-    skills: [{ name: "Photography", level: "Advanced" }],
-    location: { coordinates: [85.8300, 20.2995], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.40",
-    primarySkillColor: "#FF6B6B",
-    isOnline: true,
-    averageRating: 4.8,
-    completedSessions: 67,
-    totalReviews: 45
-  },
-  {
-    _id: "user_13",
-    name: "Aditya Mohanty",
-    email: "aditya@example.com",
-    bio: "Guitarist specializing in classical and contemporary styles.",
-    profilePicture: null,
-    skills: [{ name: "Guitar", level: "Advanced" }],
-    location: { coordinates: [85.8200, 20.2935], city: "Kharavela Nagar", state: "Odisha" },
-    distanceInKm: "1.60",
-    primarySkillColor: "#FF8C42",
-    isOnline: true,
-    averageRating: 4.7,
-    completedSessions: 38,
-    totalReviews: 24
-  },
-  {
-    _id: "user_14",
-    name: "Kavya Nair",
-    email: "kavya@example.com",
-    bio: "Full-stack web developer and UI/UX designer.",
-    profilePicture: null,
-    skills: [{ name: "Web Design", level: "Expert" }, { name: "React", level: "Advanced" }],
-    location: { coordinates: [85.8310, 20.3005], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.85",
-    primarySkillColor: "#16A085",
-    isOnline: true,
-    averageRating: 4.9,
-    completedSessions: 91,
-    totalReviews: 63
-  },
-  
-
-
-  {
-    _id: "user_18",
-    name: "Tanvi Deshmukh",
-    email: "tanvi@example.com",
-    bio: "Yoga instructor and wellness coach.",
-    profilePicture: null,
-    skills: [{ name: "Yoga", level: "Advanced" }],
-    location: { coordinates: [85.8330, 20.3025], city: "Chandrasekharpur", state: "Odisha" },
-    distanceInKm: "2.80",
-    primarySkillColor: "#9B59B6",
-    isOnline: false,
-    averageRating: 4.7,
-    completedSessions: 89,
-    totalReviews: 56
-  },
-  
-  // Users at 3-5 km
- 
-  {
-    _id: "user_20",
-    name: "Ritika Choudhary",
-    email: "ritika@example.com",
-    bio: "Professional portrait photographer.",
-    profilePicture: null,
-    skills: [{ name: "Photography", level: "Expert" }],
-    location: { coordinates: [85.8340, 20.3035], city: "Chandrasekharpur", state: "Odisha" },
-    distanceInKm: "3.50",
-    primarySkillColor: "#FF6B6B",
-    isOnline: true,
-    averageRating: 4.9,
-    completedSessions: 112,
-    totalReviews: 84
-  },
-
-
-  {
-    _id: "user_23",
-    name: "Akash Verma",
-    email: "akash@example.com",
-    bio: "Backend developer specializing in scalable Node.js applications.",
-    profilePicture: null,
-    skills: [{ name: "Node.js", level: "Expert" }, { name: "JavaScript", level: "Expert" }],
-    location: { coordinates: [85.8150, 20.2910], city: "Nayapalli", state: "Odisha" },
-    distanceInKm: "4.60",
-    primarySkillColor: "#339933",
-    isOnline: true,
-    averageRating: 4.8,
-    completedSessions: 73,
-    totalReviews: 51
-  },
-
-  {
-    _id: "user_25",
-    name: "Harsh Saxena",
-    email: "harsh@example.com",
-    bio: "Python developer and data analysis expert.",
-    profilePicture: null,
-    skills: [{ name: "Python", level: "Expert" }, { name: "Data Science", level: "Advanced" }],
-    location: { coordinates: [85.8140, 20.2905], city: "Nayapalli", state: "Odisha" },
-    distanceInKm: "5.30",
-    primarySkillColor: "#3776AB",
-    isOnline: false,
-    averageRating: 4.7,
-    completedSessions: 81,
-    totalReviews: 57
   }
 ];
-
 
 const SkillsMapExplorer: React.FC = () => {
   const [nearbyUsers, setNearbyUsers] = useState<any[]>([]);
@@ -203,8 +140,8 @@ const SkillsMapExplorer: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
-            longitude: 85.8248,
-            latitude: 20.2962
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude
           });
         },
         (error) => {

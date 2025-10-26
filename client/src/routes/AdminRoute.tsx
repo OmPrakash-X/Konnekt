@@ -1,27 +1,41 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 
 const AdminRoute: React.FC = () => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user, loading } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  console.log('AdminRoute:', { 
-    isAuthenticated, 
-    hasUser: !!user, 
-    role: user?.role 
-  });
+  useEffect(() => {
+    console.log('👑 AdminRoute check:', { isAuthenticated, role: user?.role, loading });
+    
+    if (!loading) {
+      if (!isAuthenticated || !user) {
+        console.log('❌ Not authenticated, redirecting to login');
+        navigate('/login', { replace: true, state: { from: location.pathname } });
+      } else if (user.role !== 'admin') {
+        console.log('❌ Not admin, redirecting to unauthorized');
+        navigate('/unauthorized', { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, loading, navigate, location.pathname]);
 
-  if (!isAuthenticated || !user) {
-    console.log('❌ Not authenticated - redirecting to login');
-    return <Navigate to="/login" replace />;
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-12 h-12 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
-  if (user.role !== 'admin') {
-    console.log('❌ Not admin - role is:', user.role);
-    return <Navigate to="/unauthorized" replace />;
+  // Check authorization
+  if (!isAuthenticated || !user || user.role !== 'admin') {
+    return null; // Return null while redirecting
   }
 
-  console.log('✅ Admin access granted');
+  console.log('✅ Admin authenticated, rendering admin content');
   return <Outlet />;
 };
 

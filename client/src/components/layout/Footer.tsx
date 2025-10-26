@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import KonnektLogo from '../../assets/images/KonnektLogo.png';
 
 const Footer: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const Footer: React.FC = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12  rounded-lg flex items-center justify-center">
-                 <img src="./KonnektLogo.png" alt="KonnektLogo" className='w-full h-full object-cover' />
+                 <img src={KonnektLogo} alt="KonnektLogo" className='w-full h-full object-cover' />
               </div>
               <span className="text-2xl font-bold text-white">
                 Konnekt

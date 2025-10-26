@@ -1,16 +1,40 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 
 const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user, loading } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  console.log('ProtectedRoute:', { isAuthenticated, hasUser: !!user });
+  useEffect(() => {
+    console.log('🔒 ProtectedRoute check:', { isAuthenticated, hasUser: !!user, loading });
+    
+    // Only redirect if auth check is complete and user is not authenticated
+    if (!loading && (!isAuthenticated || !user)) {
+      console.log('❌ Not authenticated, redirecting to login');
+      navigate('/login', { 
+        replace: true, 
+        state: { from: location.pathname } 
+      });
+    }
+  }, [isAuthenticated, user, loading, navigate, location.pathname]);
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />;
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-12 h-12 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
+  // Only render outlet if authenticated
+  if (!isAuthenticated || !user) {
+    return null; // Return null while redirecting
+  }
+
+  console.log('✅ Authenticated, rendering protected content');
   return <Outlet />;
 };
 

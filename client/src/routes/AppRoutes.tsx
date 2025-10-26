@@ -75,12 +75,12 @@ const AppRoutes: React.FC = () => {
           <Route path="/verify-email" element={<VerifyEmail />} />
 
           {/* Public Expert/Skill Routes */}
-          <Route path="/experts" element={<ExpertsList />} />
+     
           <Route path="/experts/:expertId" element={<ExpertProfile />} />
           <Route path="/skills" element={<SkillsExplore />} />
           <Route path="/skills/:skillId" element={<SkillDetails />} />
-          <Route path="/explore-map" element={<SkillsMapExplorer />} />
-          <Route path="/map-demo" element={<MapDemo />} />
+          <Route path="/experts" element={<SkillsMapExplorer />} />
+
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             {/* User Routes */}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import MapComponent from '../common/MapComponent';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import MapComponent from '../../components/common/MapComponent';
 import axios from 'axios';
 
 // Skill categories with colors
@@ -16,40 +16,124 @@ const SKILL_CATEGORIES = [
   { name: 'Data Science', color: '#2ECC71', icon: '📊' }
 ];
 
-// Mock data (keep your existing ALL_MOCK_USERS array here)
-export const ALL_MOCK_USERS = [
-  // Original users (0-5 km)
-  
-  
-  
+// Comprehensive mock data with various distances
+const ALL_MOCK_USERS = [
+  {
+    _id: "user_1",
+    name: "Arjun Patel",
+    email: "arjun@example.com",
+    bio: "Full-stack developer with 5 years of experience. Love teaching React and Node.js!",
+    profilePicture: null,
+    skills: [{ name: "JavaScript", level: "Expert" }, { name: "React", level: "Expert" }],
+    location: { coordinates: [85.8250, 20.2965], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.05",
+    primarySkillColor: "#F7DF1E",
+    isOnline: true,
+    averageRating: 4.9,
+    completedSessions: 78,
+    totalReviews: 45
+  },
+  {
+    _id: "user_2",
+    name: "Priya Sharma",
+    email: "priya@example.com",
+    bio: "Data scientist passionate about AI/ML. Also love photography!",
+    profilePicture: null,
+    skills: [{ name: "Python", level: "Expert" }, { name: "Data Science", level: "Expert" }],
+    location: { coordinates: [85.8235, 20.2970], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.15",
+    primarySkillColor: "#3776AB",
+    isOnline: true,
+    averageRating: 5.0,
+    completedSessions: 92,
+    totalReviews: 67
+  },
+  {
+    _id: "user_3",
+    name: "Sanjay Kumar",
+    email: "sanjay@example.com",
+    bio: "Professional photographer with 10+ years experience.",
+    profilePicture: null,
+    skills: [{ name: "Photography", level: "Expert" }],
+    location: { coordinates: [85.8260, 20.2955], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "0.20",
+    primarySkillColor: "#FF6B6B",
+    isOnline: false,
+    averageRating: 4.8,
+    completedSessions: 156,
+    totalReviews: 89
+  },
+  {
+    _id: "user_4",
+    name: "Neha Reddy",
+    email: "neha@example.com",
+    bio: "React Native developer and yoga instructor.",
+    profilePicture: null,
+    skills: [{ name: "React", level: "Expert" }, { name: "Yoga", level: "Advanced" }],
+    location: { coordinates: [85.8345, 20.3061], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "1.5",
+    primarySkillColor: "#61DAFB",
+    isOnline: true,
+    averageRating: 4.7,
+    completedSessions: 34,
+    totalReviews: 23
+  },
+  {
+    _id: "user_5",
+    name: "Rahul Mishra",
+    email: "rahul@example.com",
+    bio: "Professional guitarist and music teacher.",
+    profilePicture: null,
+    skills: [{ name: "Guitar", level: "Expert" }],
+    location: { coordinates: [85.8145, 20.2861], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "2.3",
+    primarySkillColor: "#FF8C42",
+    isOnline: false,
+    averageRating: 4.9,
+    completedSessions: 67,
+    totalReviews: 41
+  },
+  {
+    _id: "user_6",
+    name: "Divya Singh",
+    email: "divya@example.com",
+    bio: "Backend developer specializing in Node.js.",
+    profilePicture: null,
+    skills: [{ name: "Node.js", level: "Expert" }],
+    location: { coordinates: [85.8395, 20.3011], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "3.1",
+    primarySkillColor: "#339933",
+    isOnline: true,
+    averageRating: 4.6,
+    completedSessions: 45,
+    totalReviews: 28
+  },
   {
     _id: "user_7",
     name: "Vikram Rao",
     email: "vikram@example.com",
-    bio: "UI/UX designer with a passion for minimalist design.",
+    bio: "UI/UX designer and web design instructor.",
     profilePicture: null,
     skills: [{ name: "Web Design", level: "Expert" }],
-    location: { coordinates: [85.8230, 20.2955], city: "Vani Vihar", state: "Odisha" },
-    distanceInKm: "0.60",
+    location: { coordinates: [85.8095, 20.2811], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "4.8",
     primarySkillColor: "#16A085",
     isOnline: true,
     averageRating: 4.8,
     completedSessions: 89,
     totalReviews: 52
   },
-  
-  // New users (0.7-3 km)
   {
     _id: "user_8",
     name: "Anjali Gupta",
     email: "anjali@example.com",
-    bio: "Professional chef specializing in Indian and Continental cuisine.",
+    bio: "Chef and cooking instructor.",
     profilePicture: null,
     skills: [{ name: "Cooking", level: "Expert" }],
-    location: { coordinates: [85.8280, 20.2975], city: "Saheed Nagar", state: "Odisha" },
-    distanceInKm: "0.75",
+    location: { coordinates: [85.8545, 20.3211], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "6.2",
     primarySkillColor: "#E74C3C",
-    isOnline: true,
+    isOnline: false,
     averageRating: 5.0,
     completedSessions: 123,
     totalReviews: 98
@@ -58,135 +142,33 @@ export const ALL_MOCK_USERS = [
     _id: "user_9",
     name: "Karan Mehta",
     email: "karan@example.com",
-    bio: "Python automation expert and data analyst.",
+    bio: "Python automation expert.",
     profilePicture: null,
-    skills: [{ name: "Python", level: "Expert" }, { name: "Data Science", level: "Advanced" }],
-    location: { coordinates: [85.8220, 20.2945], city: "Vani Vihar", state: "Odisha" },
-    distanceInKm: "0.90",
+    skills: [{ name: "Python", level: "Expert" }],
+    location: { coordinates: [85.7945, 20.2661], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "7.8",
     primarySkillColor: "#3776AB",
     isOnline: true,
     averageRating: 4.7,
     completedSessions: 56,
     totalReviews: 34
   },
-
-  
   {
-    _id: "user_12",
-    name: "Sneha Patnaik",
-    email: "sneha@example.com",
-    bio: "Freelance photographer and videographer.",
+    _id: "user_10",
+    name: "Meera Iyer",
+    email: "meera@example.com",
+    bio: "Certified yoga instructor.",
     profilePicture: null,
-    skills: [{ name: "Photography", level: "Advanced" }],
-    location: { coordinates: [85.8300, 20.2995], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.40",
-    primarySkillColor: "#FF6B6B",
-    isOnline: true,
-    averageRating: 4.8,
-    completedSessions: 67,
-    totalReviews: 45
-  },
-  {
-    _id: "user_13",
-    name: "Aditya Mohanty",
-    email: "aditya@example.com",
-    bio: "Guitarist specializing in classical and contemporary styles.",
-    profilePicture: null,
-    skills: [{ name: "Guitar", level: "Advanced" }],
-    location: { coordinates: [85.8200, 20.2935], city: "Kharavela Nagar", state: "Odisha" },
-    distanceInKm: "1.60",
-    primarySkillColor: "#FF8C42",
-    isOnline: true,
-    averageRating: 4.7,
-    completedSessions: 38,
-    totalReviews: 24
-  },
-  {
-    _id: "user_14",
-    name: "Kavya Nair",
-    email: "kavya@example.com",
-    bio: "Full-stack web developer and UI/UX designer.",
-    profilePicture: null,
-    skills: [{ name: "Web Design", level: "Expert" }, { name: "React", level: "Advanced" }],
-    location: { coordinates: [85.8310, 20.3005], city: "Nandan Kanan Road", state: "Odisha" },
-    distanceInKm: "1.85",
-    primarySkillColor: "#16A085",
-    isOnline: true,
-    averageRating: 4.9,
-    completedSessions: 91,
-    totalReviews: 63
-  },
-  
-
-
-  {
-    _id: "user_18",
-    name: "Tanvi Deshmukh",
-    email: "tanvi@example.com",
-    bio: "Yoga instructor and wellness coach.",
-    profilePicture: null,
-    skills: [{ name: "Yoga", level: "Advanced" }],
-    location: { coordinates: [85.8330, 20.3025], city: "Chandrasekharpur", state: "Odisha" },
-    distanceInKm: "2.80",
+    skills: [{ name: "Yoga", level: "Expert" }],
+    location: { coordinates: [85.8645, 20.3311], city: "Bhubaneswar", state: "Odisha" },
+    distanceInKm: "9.5",
     primarySkillColor: "#9B59B6",
-    isOnline: false,
-    averageRating: 4.7,
-    completedSessions: 89,
-    totalReviews: 56
-  },
-  
-  // Users at 3-5 km
- 
-  {
-    _id: "user_20",
-    name: "Ritika Choudhary",
-    email: "ritika@example.com",
-    bio: "Professional portrait photographer.",
-    profilePicture: null,
-    skills: [{ name: "Photography", level: "Expert" }],
-    location: { coordinates: [85.8340, 20.3035], city: "Chandrasekharpur", state: "Odisha" },
-    distanceInKm: "3.50",
-    primarySkillColor: "#FF6B6B",
     isOnline: true,
     averageRating: 4.9,
-    completedSessions: 112,
-    totalReviews: 84
-  },
-
-
-  {
-    _id: "user_23",
-    name: "Akash Verma",
-    email: "akash@example.com",
-    bio: "Backend developer specializing in scalable Node.js applications.",
-    profilePicture: null,
-    skills: [{ name: "Node.js", level: "Expert" }, { name: "JavaScript", level: "Expert" }],
-    location: { coordinates: [85.8150, 20.2910], city: "Nayapalli", state: "Odisha" },
-    distanceInKm: "4.60",
-    primarySkillColor: "#339933",
-    isOnline: true,
-    averageRating: 4.8,
-    completedSessions: 73,
-    totalReviews: 51
-  },
-
-  {
-    _id: "user_25",
-    name: "Harsh Saxena",
-    email: "harsh@example.com",
-    bio: "Python developer and data analysis expert.",
-    profilePicture: null,
-    skills: [{ name: "Python", level: "Expert" }, { name: "Data Science", level: "Advanced" }],
-    location: { coordinates: [85.8140, 20.2905], city: "Nayapalli", state: "Odisha" },
-    distanceInKm: "5.30",
-    primarySkillColor: "#3776AB",
-    isOnline: false,
-    averageRating: 4.7,
-    completedSessions: 81,
-    totalReviews: 57
+    completedSessions: 234,
+    totalReviews: 156
   }
 ];
-
 
 const SkillsMapExplorer: React.FC = () => {
   const [nearbyUsers, setNearbyUsers] = useState<any[]>([]);
@@ -197,14 +179,16 @@ const SkillsMapExplorer: React.FC = () => {
   const [selectedSkill, setSelectedSkill] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [useMockData, setUseMockData] = useState(true);
+  const fetchingRef = useRef(false);
 
+  // Get user's current location - ONLY ONCE
   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
-            longitude: 85.8248,
-            latitude: 20.2962
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude
           });
         },
         (error) => {
@@ -217,32 +201,30 @@ const SkillsMapExplorer: React.FC = () => {
     }
   }, []);
 
-  const getFilteredMockUsers = useCallback(() => {
-    const radiusInKm = radius / 1000;
-    let filtered = ALL_MOCK_USERS.filter(user => {
-      const distance = parseFloat(user.distanceInKm);
-      return distance <= radiusInKm;
-    });
+  // Fetch function - NOT in useCallback to avoid dependency issues
+  const fetchNearbyUsers = async () => {
+    if (!userLocation || fetchingRef.current) return;
 
-    if (selectedSkill) {
-      filtered = filtered.filter(user =>
-        user.skills.some(skill => skill.name === selectedSkill)
-      );
-    }
-
-    return filtered;
-  }, [radius, selectedSkill]);
-
-  const fetchNearbyUsers = useCallback(async () => {
-    if (!userLocation) return;
-
+    fetchingRef.current = true;
     setLoading(true);
     setError(null);
 
     try {
       if (useMockData) {
         await new Promise(resolve => setTimeout(resolve, 300));
-        const filtered = getFilteredMockUsers();
+        
+        const radiusInKm = radius / 1000;
+        let filtered = ALL_MOCK_USERS.filter(user => {
+          const distance = parseFloat(user.distanceInKm);
+          return distance <= radiusInKm;
+        });
+
+        if (selectedSkill) {
+          filtered = filtered.filter(user =>
+            user.skills.some(skill => skill.name === selectedSkill)
+          );
+        }
+
         setNearbyUsers(filtered);
       } else {
         const params: any = {
@@ -269,9 +251,11 @@ const SkillsMapExplorer: React.FC = () => {
       setNearbyUsers([]);
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
-  }, [userLocation, radius, selectedSkill, useMockData, getFilteredMockUsers]);
+  };
 
+  // CRITICAL FIX: Only primitive dependencies, NOT the fetch function
   useEffect(() => {
     if (!userLocation) return;
 
@@ -280,7 +264,7 @@ const SkillsMapExplorer: React.FC = () => {
     }, 300);
 
     return () => clearTimeout(debounceTimer);
-  }, [userLocation, radius, selectedSkill, useMockData, fetchNearbyUsers]);
+  }, [userLocation?.longitude, userLocation?.latitude, radius, selectedSkill, useMockData]);
 
   const handleUserMarkerClick = useCallback((user: any) => {
     setSelectedUser(user);
@@ -290,40 +274,39 @@ const SkillsMapExplorer: React.FC = () => {
     setSelectedSkill(prev => prev === skillName ? '' : skillName);
   }, []);
 
-  const memoizedUserLocation = useMemo(() => userLocation, 
-    [userLocation?.longitude, userLocation?.latitude]
-  );
+  const memoizedUserLocation = useMemo(() => {
+    if (!userLocation) return null;
+    return userLocation;
+  }, [userLocation?.longitude, userLocation?.latitude]);
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black">
       <div className="container mx-auto px-4 py-12">
+        {/* Hero Section */}
         <div className="text-center mb-8">
-          <div className="inline-block mb-4 px-6 py-2 rounded-full bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/20 animate-fadeIn">
-            <span className="text-cyan-400 text-sm font-medium flex items-center gap-2">
-              🗺️ Explore Skills Near You
-            </span>
+          <div className="inline-block mb-4 px-6 py-2 rounded-full bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/20">
+            <span className="text-cyan-400 text-sm font-medium">🗺️ Explore Skills Near You</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fadeIn">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">
               Discover talented individuals
             </span>
             <br />
             <span className="text-white">in your area</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto animate-fadeIn">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Connect for skill exchange through personalized 1-on-1 sessions
           </p>
         </div>
 
         {error && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-red-500/10 backdrop-blur-sm border border-red-500/20 text-red-400 animate-fadeIn">
+          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-red-500/10 backdrop-blur-sm border border-red-500/20 text-red-400">
             {error}
           </div>
         )}
 
         {/* Skill Filter Pills */}
-        <div className="max-w-6xl mx-auto mb-6 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-fadeIn">
+        <div className="max-w-6xl mx-auto mb-6 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
           <h3 className="text-sm font-semibold text-cyan-400 mb-4">Filter by Skill:</h3>
           <div className="flex flex-wrap gap-2">
             {SKILL_CATEGORIES.map((skill) => (
@@ -355,8 +338,8 @@ const SkillsMapExplorer: React.FC = () => {
           </div>
         </div>
 
-        {/* Controls Row */}
-        <div className="max-w-6xl mx-auto mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fadeIn">
+        {/* Controls */}
+        <div className="max-w-6xl mx-auto mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Radius Control */}
           <div className="p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl">
             <label className="block text-sm font-semibold text-cyan-400 mb-3">
@@ -411,7 +394,7 @@ const SkillsMapExplorer: React.FC = () => {
         </div>
 
         {/* Map Container */}
-        <div className="max-w-6xl mx-auto mb-6 p-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-fadeIn">
+        <div className="max-w-6xl mx-auto mb-6 p-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
           <div className="mb-3 flex items-center justify-between px-2">
             <p className="text-sm text-gray-400 flex items-center gap-2">
               {useMockData ? (
@@ -474,7 +457,7 @@ const SkillsMapExplorer: React.FC = () => {
         </div>
 
         {/* User List */}
-        <div className="max-w-6xl mx-auto p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl animate-fadeIn">
+        <div className="max-w-6xl mx-auto p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -496,7 +479,7 @@ const SkillsMapExplorer: React.FC = () => {
               </svg>
               <p className="text-xl font-semibold text-gray-300 mb-2">No users found</p>
               <p className="text-sm text-gray-400">
-                {selectedSkill ? `Try clearing the "${selectedSkill}" filter` : 'Try increasing the radius'}
+                {selectedSkill ? `Try clearing the "${selectedSkill}" filter` : 'Try increasing the radius or enabling demo mode'}
               </p>
             </div>
           ) : (
@@ -504,7 +487,7 @@ const SkillsMapExplorer: React.FC = () => {
               {nearbyUsers.map((user) => (
                 <div
                   key={user._id}
-                  className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-500/50 transition-all cursor-pointer transform hover:scale-105 hover:shadow-2xl"
+                  className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-500/50 transition-all cursor-pointer transform hover:scale-105"
                   onClick={() => setSelectedUser(user)}
                 >
                   <div className="flex items-start gap-3 mb-3">
@@ -560,7 +543,7 @@ const SkillsMapExplorer: React.FC = () => {
         </div>
       </div>
 
-      {/* User Modal */}
+      {/* User Detail Modal */}
       {selectedUser && (
         <div
           className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
@@ -570,6 +553,7 @@ const SkillsMapExplorer: React.FC = () => {
             className="bg-gray-900/95 backdrop-blur-xl rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Modal Header */}
             <div className="p-6 border-b border-white/10">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
@@ -582,18 +566,21 @@ const SkillsMapExplorer: React.FC = () => {
                   <div>
                     <h2 className="text-2xl font-bold text-white">{selectedUser.name}</h2>
                     <p className="text-gray-400">{selectedUser.email}</p>
-                    <p className="text-sm text-cyan-400 mt-1">{selectedUser.location?.city}</p>
+                    <p className="text-sm text-cyan-400 mt-1">
+                      {selectedUser.location?.city}, {selectedUser.location?.state}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedUser(null)}
-                  className="text-gray-400 hover:text-white text-3xl"
+                  className="text-gray-400 hover:text-white text-3xl font-bold transition"
                 >
                   ×
                 </button>
               </div>
             </div>
 
+            {/* Modal Body */}
             <div className="p-6">
               {selectedUser.bio && (
                 <div className="mb-4">
@@ -628,7 +615,7 @@ const SkillsMapExplorer: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Sessions</p>
-                  <p className="text-xl font-bold text-white">{selectedUser.completedSessions}</p>
+                  <p className="text-xl font-bold text-white">{selectedUser.completedSessions || 0}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Rating</p>
@@ -636,15 +623,15 @@ const SkillsMapExplorer: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Reviews</p>
-                  <p className="text-xl font-bold text-white">{selectedUser.totalReviews}</p>
+                  <p className="text-xl font-bold text-white">{selectedUser.totalReviews || 0}</p>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg">
+                <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-500/50">
                   💬 Message
                 </button>
-                <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg">
+                <button className="flex-1 py-3 rounded-xl font-semibold bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/50">
                   📅 Book
                 </button>
               </div>
