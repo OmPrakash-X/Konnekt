@@ -1,7 +1,6 @@
 export * from './store';
 export * from './hooks';
 export * from './features/authSlice';
-export * from './features/themeSlice';
 export * from './features/userSlice';
 export * from './features/skillSlice';
 export * from './features/sessionSlice';

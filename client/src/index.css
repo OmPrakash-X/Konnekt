@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-@import 'mapbox-gl/dist/mapbox-gl.css';
-
-
- 
+@import "mapbox-gl/dist/mapbox-gl.css";
 
 @layer utilities {
   .animate-in {
@@ -36,25 +33,26 @@
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
   user-select: none;
 }
 
-/* For Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 8px; /* adjust thickness */
+#root {
+  width: 100%;
+  overflow-x: hidden;
 }
 
-*::-webkit-scrollbar-track {
+/* Additional webkit scrollbar hiding for all elements if needed */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
   background: transparent;
 }
 
-*::-webkit-scrollbar-thumb {
-  background: transparent; /* fully transparent */
-  border-radius: 10px;
-}
-/* Only visible when scrolling */
-*::-webkit-scrollbar {
-  display: none;
+::-webkit-scrollbar-track {
+  background: transparent;
 }

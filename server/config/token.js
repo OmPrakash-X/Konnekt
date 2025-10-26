@@ -21,7 +21,7 @@ const genToken = (userId) => {
     return token;
   } catch (error) {
     console.error("❌ Token Generation Error:", error.message);
-    throw error; // Don't return null, throw the error!
+    throw error; 
   }
 };
 

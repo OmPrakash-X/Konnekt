@@ -8,8 +8,8 @@ export const sendToken = (user, statusCode, message, res) => {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: "/",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // FIX THIS
-    secure: process.env.NODE_ENV === "production", // Only true in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+    secure: process.env.NODE_ENV === "production", 
   };
   
   console.log("🍪 Setting cookie with options:", cookieOptions);

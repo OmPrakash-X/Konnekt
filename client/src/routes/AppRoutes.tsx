@@ -29,7 +29,6 @@ import Settings from '../pages/user/Settings';
 import Wallet from '../pages/user/Wallet';
 
 // Expert Pages
-import ExpertsList from '../pages/expert/ExpertsList';
 import ExpertProfile from '../pages/expert/ExpertProfile';
 import BecomeExpert from '../pages/expert/BecomeExpert';
 
@@ -52,14 +51,15 @@ import ManageBadges from '../pages/admin/ManageBadges';
 import VerifySkills from '../pages/admin/VerifySkills';
 import PlatformStats from '../pages/admin/PlatformStats';
 import SkillsMapExplorer from '../components/skill/SkillsMapExplorer';
-import MapDemo from '../pages/MapDemo';
+import ExpertDashboard from '../pages/expert/ExpertDashboard';
+
 
 
 const AppRoutes: React.FC = () => {
   return (
     <>
        <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen"  >
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -92,9 +92,11 @@ const AppRoutes: React.FC = () => {
             <Route path="/wallet" element={<Wallet />} />
 
             {/* Expert Routes */}
+            <Route path="/expert/dashboard" element={<ExpertDashboard />} />
             <Route path="/become-expert" element={<BecomeExpert />} />
             <Route path="/skills/my-skills" element={<MySkills />} />
             <Route path="/skills/add" element={<AddSkill />} />
+
 
             {/* Session Routes */}
             <Route path="/sessions/my-sessions" element={<MySessions />} />

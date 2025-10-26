@@ -42,7 +42,7 @@ export const getAllUsers = createAsyncThunk(
 
 export const updateUserStatus = createAsyncThunk(
   'admin/updateUserStatus',
-  async ({ userId, status }: { userId: string; status: string }) => {
+  async ({ userId }: { userId: string; status: string }) => {
     const response = await adminAPI.suspendUser(userId);
     return response.data;
   }
@@ -74,7 +74,7 @@ export const approveSkill = createAsyncThunk(
 
 export const rejectSkill = createAsyncThunk(
   'admin/rejectSkill',
-  async ({ skillId, reason }: { skillId: string; reason: string }) => {
+  async ({ skillId}: { skillId: string; reason: string }) => {
     const response = await adminAPI.verifySkill(skillId, false);
     return response.data;
   }
