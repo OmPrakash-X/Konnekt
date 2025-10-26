@@ -4,9 +4,10 @@ A full-stack web application that connects people to exchange skills, book sessi
 
 **Built by Team Stack Pirates** 🏴‍☠️
 
-## 🚀 Live Demo
+## [🚀 Live Demo](https://konnekt-8mwt.onrender.com/)
 
-**[Insert Your Demo URL Here]**
+
+
 
 ### 🔑 Demo Credentials
 
